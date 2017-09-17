@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "128272981086",
+    "firebase_url": "https://who-s-down.firebaseio.com",
+    "project_id": "who-s-down",
+    "storage_bucket": "who-s-down.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128272981086:android:d6f4f6f8715f8f40",
+        "android_client_info": {
+          "package_name": "com.vandyke.whosdown"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "128272981086-hsg5da5jqgi68o67ofetsab2socl9rhm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vandyke.whosdown",
+            "certificate_hash": "e4997e88fee9d9773e94fbe4daf8b5d844d460bb"
+          }
+        },
+        {
+          "client_id": "128272981086-jslicf98i133t6vsk6prghsunpsufm8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCF1uHIIqwmPSlpvf6fQlEruLajvfHs_fQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "128272981086-jslicf98i133t6vsk6prghsunpsufm8s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
