@@ -15,8 +15,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.vandyke.whosdown.ui.MainActivity"
-        android:animateLayoutChanges="true">
+        tools:context="com.vandyke.whosdown.ui.MainActivity">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
@@ -34,6 +33,7 @@
             <Switch
                 android:checked="@{viewModel.down}"
                 android:onClick="@{() -> viewModel.onDownSwitched(downSwitch.isChecked())}"
+                android:clickable="@{viewModel.authorized || viewModel.down}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/downSwitch"
@@ -67,6 +67,13 @@
                 android:layout_marginBottom="8dp"/>
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.Guideline
+            app:layout_constraintGuide_percent="@{viewModel.authorized &amp;&amp; viewModel.down ? 0.25f : 1f, default=1}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/guideline"
+            android:orientation="horizontal"/>
+
         <android.support.v7.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -78,12 +85,19 @@
             android:layout_marginBottom="0dp">
         </android.support.v7.widget.RecyclerView>
 
-        <android.support.constraint.Guideline
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:id="@+id/guideline"
-            app:layout_constraintGuide_begin="@{viewModel.down ? 0.25f : 1f}"
-            android:orientation="horizontal"/>
+        <Button
+            android:visibility="@{viewModel.authorized ? View.GONE : View.VISIBLE}"
+            android:id="@+id/verifyButton"
+            android:onClick="verifyPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="Log in"/>
 
     </android.support.constraint.ConstraintLayout>
 

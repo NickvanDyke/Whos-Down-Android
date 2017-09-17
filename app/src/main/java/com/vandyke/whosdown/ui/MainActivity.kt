@@ -1,6 +1,5 @@
 package com.vandyke.whosdown.ui
 
-import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.databinding.BindingAdapter
@@ -12,6 +11,9 @@ import android.support.constraint.ConstraintLayout
 import android.support.constraint.Guideline
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
+import com.firebase.ui.auth.AuthUI
+import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
 import com.vandyke.whosdown.ui.peepslist.PeepsAdapter
@@ -22,12 +24,12 @@ class MainActivity : Activity() {
 
     lateinit var viewModel: ViewModel
 
-    val SIGN_IN = 100
+    val VERIFY_PHONE_NUMBER = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // TODO: authenticate/register if needed
 
+        FirebaseAuth.getInstance().signOut()
         /* instantiate the ViewModel and bind it to the view */
         viewModel = ViewModel(application)
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
@@ -53,16 +55,24 @@ class MainActivity : Activity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SIGN_IN) {
+        if (requestCode == VERIFY_PHONE_NUMBER) {
             if (resultCode == Activity.RESULT_OK) {
-//                database.child(auth.currentUser?.phoneNumber).setValue(DownStatus(false, "sup"))
+                viewModel.authorized.set(true)
             }
         }
     }
 
+    fun verifyPhoneNumber(view: View? = null) {
+        startActivityForResult(
+                AuthUI.getInstance().createSignInIntentBuilder()
+                        .setAvailableProviders(listOf(AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build()))
+                        .build(),
+                VERIFY_PHONE_NUMBER)
+    }
+
     object Binding {
         @JvmStatic
-        @BindingAdapter("layout_constraintGuide_begin")
+        @BindingAdapter("layout_constraintGuide_percent")
         fun setLayoutConstraintGuideBegin(guideline: Guideline, percent: Float) {
             val params = guideline.layoutParams as ConstraintLayout.LayoutParams
             params.guidePercent = percent
