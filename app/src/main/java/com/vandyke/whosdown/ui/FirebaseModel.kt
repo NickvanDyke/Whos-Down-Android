@@ -18,12 +18,25 @@ class FirebaseModel(val viewModel: ViewModel) {
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    val otherNumbersListener = object : ValueEventListener {
+    init {
+        database.getReference(".info/connected").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val connected = dataSnapshot.getValue(Boolean::class.java) ?: return
+                viewModel.connected.set(connected)
+            }
+
+            override fun onCancelled(p0: DatabaseError?) {
+                TODO("not implemented")
+            }
+        })
+    }
+
+    val localNumberListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val downStatus = dataSnapshot.getValue(DownStatus::class.java) ?: return
             println("new DownStatus for local user: $downStatus")
             viewModel.down.set(downStatus.down)
-            viewModel.localUserMessage.set(downStatus.message)
+            viewModel.message.set(downStatus.message)
         }
 
         override fun onCancelled(p0: DatabaseError?) {
@@ -31,7 +44,19 @@ class FirebaseModel(val viewModel: ViewModel) {
         }
     }
 
+    fun setUserDown(down: Boolean) {
+        database.reference.child(auth.currentUser!!.phoneNumber).child("down").setValue(down)
+    }
+
+    fun setUserMessage(msg: String) {
+        database.reference.child(auth.currentUser!!.phoneNumber).child("message").setValue(msg)
+    }
+
+    /* adds a listener for the local user's status, and also loops through all of the phone's contacts,
+        checks if there's an entry in the database for the phone number of each, and if there is, attaches a listener to that number's node */
     fun setListeners(context: Context) {
+        database.reference.child(auth.currentUser!!.phoneNumber).addValueEventListener(localNumberListener)
+
         val cursorLoader = CursorLoader(context,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
@@ -48,7 +73,7 @@ class FirebaseModel(val viewModel: ViewModel) {
 
         val countryCode = GenUtil.getCountryCode(context).toUpperCase()
 
-        /* check the database for each of the contact's numbers */
+        /* check the database for each of the contact's numbers, add listener to the node if it exists */
         for (i in 0 until cursor.count) {
             cursor.moveToPosition(i)
             val name = cursor.getString(nameCol)
