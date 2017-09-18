@@ -2,7 +2,7 @@ package com.vandyke.whosdown.ui.main.view.peepslist
 
 import android.databinding.ObservableList
 import android.support.v7.widget.RecyclerView
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.data.Peep
@@ -34,7 +34,7 @@ class PeepsAdapter(val viewModel: ViewModel) : RecyclerView.Adapter<PeepHolder>(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PeepHolder {
-        return PeepHolder(View.inflate(parent.context, R.layout.holder_peep, null))
+        return PeepHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_peep, parent, false))
     }
 
     override fun onBindViewHolder(holder: PeepHolder, position: Int) {

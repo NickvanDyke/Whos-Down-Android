@@ -17,7 +17,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
     private val model = FirebaseModel(this)
 
     init {
-        model.setListeners(application)
+        model.setDbListeners(application)
 
         message.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable, propertyId: Int) {

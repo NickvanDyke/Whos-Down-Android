@@ -18,6 +18,7 @@ import com.vandyke.whosdown.util.getCountryCode
 class FirebaseModel(val viewModel: ViewModel) {
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val listeners = mutableMapOf<String, ValueEventListener>()
 
     init {
         database.getReference(".info/connected").addValueEventListener(object : ValueEventListener {
@@ -55,7 +56,7 @@ class FirebaseModel(val viewModel: ViewModel) {
 
     /* adds a listener for the local user's status, and also loops through all of the phone's contacts,
         checks if there's an entry in the database for the phone number of each, and if there is, attaches a listener to that number's node */
-    fun setListeners(context: Context) {
+    fun setDbListeners(context: Context) {
         database.reference.child("users").child(auth.currentUser!!.phoneNumber).addValueEventListener(localNumberListener)
 
         val cursorLoader = CursorLoader(context,
@@ -80,9 +81,9 @@ class FirebaseModel(val viewModel: ViewModel) {
             val name = cursor.getString(nameCol)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
             if (number != null) {
-                database.reference.child("users").child(number).addValueEventListener(object : ValueEventListener {
+                listeners.put(number, database.reference.child("users").child(number).addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (!dataSnapshot.exists()) /* cancel listener on nodes that don't already exist. Not worth the resources to monitor them */
+                        if (!dataSnapshot.exists()) /* cancel listeners on nodes that don't already exist. Not worth the resources to monitor them */
                             database.reference.child("users").child(number).removeEventListener(this)
                         val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
                         val uri = Uri.parse("") // Uri.parse(cursor.getString(uriCol)) TODO: get proper contact thumbnail uri
@@ -92,10 +93,16 @@ class FirebaseModel(val viewModel: ViewModel) {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
+                        listeners.remove(number)
                         viewModel.updatePeeps(Peep(name, Uri.parse(""), number, false, ""))
                     }
-                })
+                }))
             }
         }
+    }
+
+    fun removeAllDbListeners() {
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).removeEventListener(localNumberListener)
+        listeners.forEach { database.reference.child("users").child(it.key).removeEventListener(it.value) }
     }
 }

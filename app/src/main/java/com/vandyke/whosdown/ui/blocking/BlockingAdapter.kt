@@ -3,7 +3,7 @@ package com.vandyke.whosdown.ui.blocking
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.support.v7.widget.RecyclerView
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -22,7 +22,7 @@ class BlockingAdapter(val cursor: Cursor) : RecyclerView.Adapter<BlockingHolder>
     val auth = FirebaseAuth.getInstance()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BlockingHolder {
-        return BlockingHolder(View.inflate(parent.context, R.layout.holder_blocking, null))
+        return BlockingHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_blocking, parent, false))
     }
 
     override fun onBindViewHolder(holder: BlockingHolder, position: Int) {
