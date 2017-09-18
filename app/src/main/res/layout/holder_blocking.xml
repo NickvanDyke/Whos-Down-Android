@@ -5,8 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/peepLayout"
-    android:background="?android:selectableItemBackground">
+    android:id="@+id/peepLayout">
 
     <TextView
         android:text="Name"

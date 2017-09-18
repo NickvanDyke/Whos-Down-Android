@@ -32,8 +32,8 @@ class BlockingAdapter(val cursor: Cursor) : RecyclerView.Adapter<BlockingHolder>
         val number = cursor.getString(numberCol).toLocalizedE164(holder.itemView.context)
         holder.number = number
         if (number != null) {
-            database.child(auth.currentUser!!.phoneNumber)
-                    .child("blocked")
+            database.child("blocked")
+                    .child(auth.currentUser!!.phoneNumber)
                     .child(number).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     holder.blocked = dataSnapshot.exists()

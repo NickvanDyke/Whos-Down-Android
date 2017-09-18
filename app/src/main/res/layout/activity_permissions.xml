@@ -12,19 +12,24 @@
         android:padding="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Who's Down uses phone numbers to identify its users. Please grant access to your contacts so Who's Down can identify your friends, and also verify your phone number so your friends can identify you. Your contacts information is not used for anything but this."/>
+        android:textColor="@color/white"
+        android:text="Who's Down uses phone numbers to identify its users. Please grant access to your contacts so Who's Down knows who to display to you, and also verify your phone number so your friends can see you on Who's Down. Your contacts information is not used for anything but this."/>
 
     <Button
         android:id="@+id/contactsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="requestContactsPermission"
-        android:text="Grant contacts permission"/>
+        android:text="Grant contacts permission"
+        android:background="@null"
+        android:textColor="@color/white"/>
 
     <Button
         android:id="@+id/logInButton"
         android:onClick="logIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Verify phone number"/>
+        android:text="Verify phone number"
+        android:background="@null"
+        android:textColor="@color/white"/>
 </LinearLayout>

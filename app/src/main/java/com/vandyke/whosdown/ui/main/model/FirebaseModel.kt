@@ -11,7 +11,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.vandyke.whosdown.data.Peep
-import com.vandyke.whosdown.data.UserNode
+import com.vandyke.whosdown.data.UserStatus
 import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
 import com.vandyke.whosdown.util.getCountryCode
 
@@ -26,7 +26,7 @@ class FirebaseModel(val viewModel: ViewModel) {
                 viewModel.connected.set(connected)
             }
 
-            override fun onCancelled(p0: DatabaseError?) {
+            override fun onCancelled(error: DatabaseError?) {
                 TODO("not implemented")
             }
         })
@@ -34,29 +34,29 @@ class FirebaseModel(val viewModel: ViewModel) {
 
     val localNumberListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val downStatus = dataSnapshot.getValue(UserNode::class.java) ?: return
-            println("new UserNode for local user: $downStatus")
-            viewModel.down.set(downStatus.down)
-            viewModel.message.set(downStatus.message)
+            val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
+            println("new UserStatus for local user: $userStatus")
+            viewModel.down.set(userStatus.down)
+            viewModel.message.set(userStatus.message)
         }
 
-        override fun onCancelled(p0: DatabaseError?) {
+        override fun onCancelled(error: DatabaseError?) {
             TODO("not implemented")
         }
     }
 
     fun setUserDown(down: Boolean) {
-        database.reference.child(auth.currentUser!!.phoneNumber).child("down").setValue(down)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("down").setValue(down)
     }
 
     fun setUserMessage(msg: String) {
-        database.reference.child(auth.currentUser!!.phoneNumber).child("message").setValue(msg)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("message").setValue(msg)
     }
 
     /* adds a listener for the local user's status, and also loops through all of the phone's contacts,
         checks if there's an entry in the database for the phone number of each, and if there is, attaches a listener to that number's node */
     fun setListeners(context: Context) {
-        database.reference.child(auth.currentUser!!.phoneNumber).addValueEventListener(localNumberListener)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).addValueEventListener(localNumberListener)
 
         val cursorLoader = CursorLoader(context,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -74,23 +74,25 @@ class FirebaseModel(val viewModel: ViewModel) {
 
         val countryCode = context.getCountryCode()
 
-        /* check the database for each of the contact's numbers, add listener to the node if it exists */
+        /* add a listener to the user number of each contact's phone number */
         for (i in 0 until cursor.count) {
             cursor.moveToPosition(i)
             val name = cursor.getString(nameCol)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
             if (number != null) {
-                database.reference.child(number)?.addValueEventListener(object : ValueEventListener {
+                database.reference.child("users").child(number).addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val downStatus = dataSnapshot.getValue(UserNode::class.java) ?: return
+                        if (!dataSnapshot.exists()) /* cancel listener on nodes that don't already exist. Not worth the resources to monitor them */
+                            database.reference.child("users").child(number).removeEventListener(this)
+                        val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
                         val uri = Uri.parse("") // Uri.parse(cursor.getString(uriCol)) TODO: get proper contact thumbnail uri
-                        val peep = Peep(name, uri, dataSnapshot.key, downStatus.down, downStatus.message)
+                        val peep = Peep(name, uri, dataSnapshot.key, userStatus.down, userStatus.message)
                         println("peep update: $peep")
                         viewModel.updatePeeps(peep)
                     }
 
-                    override fun onCancelled(p0: DatabaseError) {
-
+                    override fun onCancelled(error: DatabaseError) {
+                        viewModel.updatePeeps(Peep(name, Uri.parse(""), number, false, ""))
                     }
                 })
             }

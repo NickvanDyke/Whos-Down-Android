@@ -31,13 +31,13 @@ class BlockingHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.O
         if (number == null)
             return
         if (!blocked) {
-            FirebaseDatabase.getInstance().reference.child(FirebaseAuth.getInstance().currentUser!!.phoneNumber)
-                    .child("blocked")
+            FirebaseDatabase.getInstance().reference.child("blocked")
+                    .child(FirebaseAuth.getInstance().currentUser!!.phoneNumber)
                     .child(number)
                     .setValue(true, { databaseError, databaseReference -> blocked = true })
         } else {
-            FirebaseDatabase.getInstance().reference.child(FirebaseAuth.getInstance().currentUser!!.phoneNumber)
-                    .child("blocked")
+            FirebaseDatabase.getInstance().reference.child("blocked")
+                    .child(FirebaseAuth.getInstance().currentUser!!.phoneNumber)
                     .child(number)
                     .removeValue({ databaseError, databaseReference -> blocked = false })
         }
