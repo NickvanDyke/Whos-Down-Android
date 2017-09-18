@@ -1,4 +1,4 @@
-package com.vandyke.whosdown.ui
+package com.vandyke.whosdown.ui.main.view
 
 import android.Manifest
 import android.app.Activity
@@ -15,10 +15,11 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
-import com.vandyke.whosdown.PermissionsActivity
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
-import com.vandyke.whosdown.ui.peepslist.PeepsAdapter
+import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
+import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
+import com.vandyke.whosdown.ui.permissions.PermissionsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -36,6 +37,7 @@ class MainActivity : Activity() {
                 || FirebaseAuth.getInstance().currentUser == null) {
             startActivity(Intent(this, PermissionsActivity::class.java))
             finish()
+            return
         }
 
         /* instantiate the ViewModel and bind it to the view */

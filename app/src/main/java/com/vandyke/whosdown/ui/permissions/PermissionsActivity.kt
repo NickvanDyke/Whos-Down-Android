@@ -1,4 +1,4 @@
-package com.vandyke.whosdown
+package com.vandyke.whosdown.ui.permissions
 
 import android.Manifest
 import android.app.Activity
@@ -10,7 +10,8 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
-import com.vandyke.whosdown.ui.MainActivity
+import com.vandyke.whosdown.R
+import com.vandyke.whosdown.ui.main.view.MainActivity
 import kotlinx.android.synthetic.main.activity_permissions.*
 
 class PermissionsActivity : Activity() {

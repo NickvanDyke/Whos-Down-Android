@@ -1,4 +1,4 @@
-package com.vandyke.whosdown.ui
+package com.vandyke.whosdown.ui.main.model
 
 import android.content.Context
 import android.content.CursorLoader
@@ -10,8 +10,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.vandyke.whosdown.data.DownStatus
 import com.vandyke.whosdown.data.Peep
+import com.vandyke.whosdown.data.UserNode
+import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
 import com.vandyke.whosdown.util.GenUtil
 
 class FirebaseModel(val viewModel: ViewModel) {
@@ -33,8 +34,8 @@ class FirebaseModel(val viewModel: ViewModel) {
 
     val localNumberListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val downStatus = dataSnapshot.getValue(DownStatus::class.java) ?: return
-            println("new DownStatus for local user: $downStatus")
+            val downStatus = dataSnapshot.getValue(UserNode::class.java) ?: return
+            println("new UserNode for local user: $downStatus")
             viewModel.down.set(downStatus.down)
             viewModel.message.set(downStatus.message)
         }
@@ -81,7 +82,7 @@ class FirebaseModel(val viewModel: ViewModel) {
             if (number != null) {
                 database.reference.child(number)?.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val downStatus = dataSnapshot.getValue(DownStatus::class.java) ?: return
+                        val downStatus = dataSnapshot.getValue(UserNode::class.java) ?: return
                         val uri = Uri.parse("") // Uri.parse(cursor.getString(uriCol)) TODO: get proper contact thumbnail uri
                         val peep = Peep(name, uri, dataSnapshot.key, downStatus.down, downStatus.message)
                         println("peep update: $peep")

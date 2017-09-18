@@ -1,4 +1,4 @@
-package com.vandyke.whosdown.ui.peepslist
+package com.vandyke.whosdown.ui.main.view.peepslist
 
 import android.databinding.ObservableList
 import android.support.v7.widget.RecyclerView
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.data.Peep
-import com.vandyke.whosdown.ui.ViewModel
+import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
 
 class PeepsAdapter(val viewModel: ViewModel) : RecyclerView.Adapter<PeepHolder>() {
     init {

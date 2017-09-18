@@ -1,9 +1,10 @@
-package com.vandyke.whosdown.ui
+package com.vandyke.whosdown.ui.main.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.databinding.*
 import com.vandyke.whosdown.data.Peep
+import com.vandyke.whosdown.ui.main.model.FirebaseModel
 
 
 class ViewModel(application: Application) : AndroidViewModel(application) {
@@ -26,7 +27,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         })
     }
 
-    fun onDownSwitched(down: Boolean) {
+    fun onDownSwitchClicked(down: Boolean) {
         model.setUserDown(down)
     }
 

@@ -1,4 +1,4 @@
-package com.vandyke.whosdown.ui.peepslist
+package com.vandyke.whosdown.ui.main.view.peepslist
 
 import android.content.Intent
 import android.net.Uri
