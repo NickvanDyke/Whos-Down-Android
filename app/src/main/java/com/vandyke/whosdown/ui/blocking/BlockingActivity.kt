@@ -1,24 +1,25 @@
 package com.vandyke.whosdown.ui.blocking
 
+import android.app.Activity
 import android.content.CursorLoader
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import com.vandyke.whosdown.R
 import kotlinx.android.synthetic.main.activity_blocking.*
-import kotlinx.android.synthetic.main.activity_main.*
 
-class BlockingActivity : AppCompatActivity() {
+class BlockingActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blocking)
 
+        actionBar.title = "Block contacts"
+
         val layoutManager = LinearLayoutManager(this)
         blockingList.layoutManager = layoutManager
-        blockingList.addItemDecoration(DividerItemDecoration(peepsList.context, layoutManager.orientation))
+        blockingList.addItemDecoration(DividerItemDecoration(blockingList.context, layoutManager.orientation))
 
         val cursorLoader = CursorLoader(this,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,

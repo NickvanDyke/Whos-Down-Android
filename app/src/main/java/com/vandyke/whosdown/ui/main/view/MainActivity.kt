@@ -17,6 +17,7 @@ import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
+import com.vandyke.whosdown.ui.blocking.BlockingActivity
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
 import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
 import com.vandyke.whosdown.ui.permissions.PermissionsActivity
@@ -30,6 +31,7 @@ class MainActivity : Activity() {
     val pixelHeight = Resources.getSystem().displayMetrics.heightPixels
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
         /* check for contacts permission and that user is authorized on Firebase, launch permissions activity if either is false */
@@ -68,5 +70,9 @@ class MainActivity : Activity() {
                 }
             }
         })
+    }
+
+    fun launchBlockingActivity(view: View? = null) {
+        startActivity(Intent(this, BlockingActivity::class.java))
     }
 }

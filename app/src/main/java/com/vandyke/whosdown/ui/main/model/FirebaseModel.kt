@@ -13,7 +13,7 @@ import com.google.firebase.database.ValueEventListener
 import com.vandyke.whosdown.data.Peep
 import com.vandyke.whosdown.data.UserNode
 import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
-import com.vandyke.whosdown.util.GenUtil
+import com.vandyke.whosdown.util.getCountryCode
 
 class FirebaseModel(val viewModel: ViewModel) {
     private val database = FirebaseDatabase.getInstance()
@@ -72,7 +72,7 @@ class FirebaseModel(val viewModel: ViewModel) {
         val numberCol = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
         val uriCol = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
 
-        val countryCode = GenUtil.getCountryCode(context).toUpperCase()
+        val countryCode = context.getCountryCode()
 
         /* check the database for each of the contact's numbers, add listener to the node if it exists */
         for (i in 0 until cursor.count) {
