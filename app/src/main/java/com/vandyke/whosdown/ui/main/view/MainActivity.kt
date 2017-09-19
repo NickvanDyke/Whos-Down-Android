@@ -30,7 +30,6 @@ import com.vandyke.whosdown.ui.blocking.BlockingActivity
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
 import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
 import com.vandyke.whosdown.ui.permissions.PermissionsActivity
-import com.vandyke.whosdown.util.dpToPx
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -39,6 +38,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
     lateinit var viewModel: ViewModel
 
     val pixelHeight = Resources.getSystem().displayMetrics.heightPixels
+    val downHeight = (pixelHeight * 0.25).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +72,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         viewModel.down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable, propertyId: Int) {
                 if ((sender as ObservableBoolean).get()) {
-                    downLayout.measure(View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.AT_MOST),
-                            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.AT_MOST))
-                    val resizeAnimation = ResizeAnimation(downLayout, pixelHeight, downLayout.measuredHeight - dpToPx(128))
+                    val resizeAnimation = ResizeAnimation(downLayout, pixelHeight, downHeight)
                     resizeAnimation.duration = 300
 
                     val fadeAnimation = AlphaAnimation(1.0f, 0.0f)
@@ -90,7 +88,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                     downLayout.startAnimation(resizeAnimation)
                     downLogo.startAnimation(fadeAnimation)
                 } else {
-                    val resizeAnimation = ResizeAnimation(downLayout, downLayout.measuredHeight, pixelHeight)
+                    val resizeAnimation = ResizeAnimation(downLayout, downHeight, pixelHeight)
                     resizeAnimation.duration = 300
 
                     val fadeAnimation = AlphaAnimation(0.0f, 1.0f)
