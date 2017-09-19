@@ -17,6 +17,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
     private val model = FirebaseModel(this)
 
     init {
+        model.setUserDbListener()
         model.setDbListeners(application)
 
         message.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
@@ -29,6 +30,10 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onDownSwitchClicked(down: Boolean) {
         model.setUserDown(down)
+    }
+
+    fun refreshListeners() {
+        model.setDbListeners(getApplication())
     }
 
     fun updatePeeps(updatedPeep: Peep) {

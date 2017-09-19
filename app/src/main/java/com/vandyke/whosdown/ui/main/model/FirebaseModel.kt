@@ -54,11 +54,12 @@ class FirebaseModel(val viewModel: ViewModel) {
         database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("message").setValue(msg)
     }
 
-    /* adds a listener for the local user's status, and also loops through all of the phone's contacts,
-        checks if there's an entry in the database for the phone number of each, and if there is, attaches a listener to that number's node */
-    fun setDbListeners(context: Context) {
+    /* adds a listener to the user node for the current local user */
+    fun setUserDbListener() {
         database.reference.child("users").child(auth.currentUser!!.phoneNumber).addValueEventListener(localNumberListener)
+    }
 
+    fun setDbListeners(context: Context) {
         val cursorLoader = CursorLoader(context,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
@@ -80,11 +81,13 @@ class FirebaseModel(val viewModel: ViewModel) {
             cursor.moveToPosition(i)
             val name = cursor.getString(nameCol)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
-            if (number != null) {
+            if (number != null && !listeners.containsKey(number)) {
                 listeners.put(number, database.reference.child("users").child(number).addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (!dataSnapshot.exists()) /* cancel listeners on nodes that don't already exist. Not worth the resources to monitor them */
+                        if (!dataSnapshot.exists()) {/* cancel listeners on nodes that don't already exist. Not worth the resources to monitor them */
                             database.reference.child("users").child(number).removeEventListener(this)
+                            listeners.remove(number)
+                        }
                         val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
                         val uri = Uri.parse("") // Uri.parse(cursor.getString(uriCol)) TODO: get proper contact thumbnail uri
                         val peep = Peep(name, uri, dataSnapshot.key, userStatus.down, userStatus.message)

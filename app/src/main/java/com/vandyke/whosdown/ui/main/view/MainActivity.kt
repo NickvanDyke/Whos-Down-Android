@@ -67,6 +67,18 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, layoutManager.orientation))
         peepsList.adapter = PeepsAdapter(viewModel)
 
+        /* set swipe refresh for peeps list color and function */
+        peepsListSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent))
+        peepsListSwipe.setOnRefreshListener {
+            viewModel.refreshListeners()
+//            peepsListSwipe.postDelayed({ peepsListSwipe.isRefreshing = false }, 300)
+            peepsListSwipe.isRefreshing = false
+        }
+
+        downSwitch.setOnCheckedChangeListener { compoundButton, b ->
+            viewModel.onDownSwitchClicked(b)
+        }
+
 
         /* add a listener that will animate changing the height of the downLayout when down changes */
         viewModel.down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
