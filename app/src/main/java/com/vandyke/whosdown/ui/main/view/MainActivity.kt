@@ -15,7 +15,6 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -23,7 +22,6 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupMenu
-import android.widget.ShareActionProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
@@ -35,13 +33,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
-
-    lateinit var viewModel: ViewModel
-
-    lateinit var shareProvider: ShareActionProvider
-
-    val pixelHeight = Resources.getSystem().displayMetrics.heightPixels
-    var downWrapContentHeight: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
@@ -57,10 +48,11 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
         /* instantiate the ViewModel and bind the view to it */
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        viewModel = ViewModel(application)
+        val viewModel = ViewModel(application)
         binding.viewModel = viewModel
 
         /* make the downLayout start as filling the entire screen */
+        val pixelHeight = Resources.getSystem().displayMetrics.heightPixels
         val params = downLayout.layoutParams as ConstraintLayout.LayoutParams
         params.height = pixelHeight
         downLayout.layoutParams = params
@@ -68,7 +60,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         /* calculate the wrap_content height of downLayout for when it's moved */
         downLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
-        downWrapContentHeight = downLayout.measuredHeight
+        val downWrapContentHeight = downLayout.measuredHeight
 
         /* add a listener that will animate changing the height of the downLayout when down changes */
         viewModel.down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
@@ -103,9 +95,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         })
 
         /* set RecyclerView stuff */
-        val layoutManager = LinearLayoutManager(this)
-        peepsList.layoutManager = layoutManager
-        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, layoutManager.orientation))
+        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, (peepsList.layoutManager as LinearLayoutManager).orientation))
         peepsList.adapter = PeepsAdapter(viewModel)
 
         /* set swipe refresh for peeps list color and function */
@@ -113,10 +103,6 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         peepsListSwipe.setOnRefreshListener {
             viewModel.refreshListeners()
             peepsListSwipe.isRefreshing = false
-        }
-
-        downSwitch.setOnCheckedChangeListener { compoundButton, b ->
-            viewModel.onDownSwitchClicked(b)
         }
 
         /* update the viewModel's message when the EditText loses focus (which is caused when somewhere else is touched, or done is pressed on kb) */
@@ -133,13 +119,6 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         }
     }
 
-    fun showPopupMenu(view: View) {
-        val popupMenu = PopupMenu(this, view)
-        popupMenu.inflate(R.menu.main_popup)
-        popupMenu.setOnMenuItemClickListener(this)
-        popupMenu.show()
-    }
-
     override fun onMenuItemClick(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.blockContacts -> startActivity(Intent(this, BlockingActivity::class.java))
@@ -153,14 +132,11 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         return true
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_popup, menu)
-        shareProvider = menu.findItem(R.id.share).actionProvider as ShareActionProvider
-        val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "play store url") // TODO: put play store url here
-        shareIntent.type = "text/plain"
-        shareProvider.setShareIntent(shareIntent)
-        return true
+    fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.main_popup)
+        popupMenu.setOnMenuItemClickListener(this)
+        popupMenu.show()
     }
 
     /* clears EditText focus and hides keyboard when tapping anywhere else */

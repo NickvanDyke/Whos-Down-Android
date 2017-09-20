@@ -17,9 +17,7 @@ class BlockingActivity : Activity() {
 
         actionBar.title = "Block contacts"
 
-        val layoutManager = LinearLayoutManager(this)
-        blockingList.layoutManager = layoutManager
-        blockingList.addItemDecoration(DividerItemDecoration(blockingList.context, layoutManager.orientation))
+        blockingList.addItemDecoration(DividerItemDecoration(blockingList.context, (blockingList.layoutManager as LinearLayoutManager).orientation))
 
         val cursorLoader = CursorLoader(this,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,

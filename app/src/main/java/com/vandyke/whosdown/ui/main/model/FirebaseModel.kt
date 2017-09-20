@@ -33,7 +33,7 @@ class FirebaseModel(val viewModel: ViewModel) {
         })
     }
 
-    val localNumberListener = object : ValueEventListener {
+    val userListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
             println("new UserStatus for local user: $userStatus")
@@ -56,7 +56,7 @@ class FirebaseModel(val viewModel: ViewModel) {
 
     /* adds a listener to the user node for the current local user */
     fun setUserDbListener() {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).addValueEventListener(localNumberListener)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).addValueEventListener(userListener)
     }
 
     fun setDbListeners(context: Context) {
@@ -105,7 +105,7 @@ class FirebaseModel(val viewModel: ViewModel) {
     }
 
     fun removeAllDbListeners() {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).removeEventListener(localNumberListener)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).removeEventListener(userListener)
         listeners.forEach { database.reference.child("users").child(it.key).removeEventListener(it.value) }
     }
 }

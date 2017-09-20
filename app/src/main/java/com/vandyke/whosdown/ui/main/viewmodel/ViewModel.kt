@@ -20,16 +20,17 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         model.setUserDbListener()
         model.setDbListeners(application)
 
-        message.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+        down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-                val msg = (sender as ObservableField<String>).get()
-                model.setUserMessage(msg)
+                model.setUserDown((sender as ObservableBoolean).get())
             }
         })
-    }
 
-    fun onDownSwitchClicked(down: Boolean) {
-        model.setUserDown(down)
+        message.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable, propertyId: Int) {
+                model.setUserMessage((sender as ObservableField<String>).get())
+            }
+        })
     }
 
     fun refreshListeners() {

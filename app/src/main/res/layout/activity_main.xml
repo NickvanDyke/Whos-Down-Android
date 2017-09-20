@@ -41,7 +41,7 @@
                 app:layout_constraintTop_toTopOf="parent"/>
 
             <Switch
-                android:checked="@{viewModel.down}"
+                android:checked="@={viewModel.down}"
                 android:enabled="@{viewModel.connected}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                     android:background="@null"
                     android:padding="8dp"
                     android:imeOptions="actionDone"
-                    android:maxLines="2"/>
+                    android:maxLines="1"/>
 
             </android.support.v7.widget.CardView>
 
@@ -114,6 +114,8 @@
             android:id="@+id/peepsListSwipe">
 
             <android.support.v7.widget.RecyclerView
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                android:orientation="vertical"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:id="@+id/peepsList"
@@ -123,6 +125,7 @@
 
         <TextView
             android:visibility="@{viewModel.connected ? View.GONE : View.VISIBLE}"
+            android:textColor="@{viewModel.down ? @color/colorPrimary : @color/white}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/offlineText"
@@ -132,7 +135,6 @@
             android:text="OFFLINE"
             android:textSize="36sp"
             android:translationZ="5dp"
-            android:textColor="@{viewModel.down ? @color/colorPrimary : @color/white}"
             android:layout_marginBottom="16dp"/>
 
     </android.support.constraint.ConstraintLayout>
