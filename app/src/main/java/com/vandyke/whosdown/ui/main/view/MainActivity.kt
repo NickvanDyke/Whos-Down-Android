@@ -20,6 +20,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ShareActionProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
@@ -33,6 +34,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : Activity() {
 
     lateinit var viewModel: ViewModel
+
+    lateinit var shareProvider: ShareActionProvider
 
     val pixelHeight = Resources.getSystem().displayMetrics.heightPixels
     val downHeight = (pixelHeight * 0.25).toInt()
@@ -72,7 +75,6 @@ class MainActivity : Activity() {
         peepsListSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent))
         peepsListSwipe.setOnRefreshListener {
             viewModel.refreshListeners()
-//            peepsListSwipe.postDelayed({ peepsListSwipe.isRefreshing = false }, 300)
             peepsListSwipe.isRefreshing = false
         }
 
@@ -120,7 +122,7 @@ class MainActivity : Activity() {
             }
         })
 
-        /* make the keyboard close and message box lose focus when done is pressed on the keyboard */
+        /* update viewModel message, close the keyboard and clear focus from message box when done is pressed on the keyboard */
         userMessage.setOnEditorActionListener { textView, i, keyEvent ->
             userMessage.clearFocus()
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -137,8 +139,13 @@ class MainActivity : Activity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_action_bar, menu)
+        shareProvider = menu.findItem(R.id.share).actionProvider as ShareActionProvider
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "play store url") // TODO: put play store url here
+        shareIntent.type = "text/plain"
+        shareProvider.setShareIntent(shareIntent)
         return true
     }
 
