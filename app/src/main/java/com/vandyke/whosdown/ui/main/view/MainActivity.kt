@@ -15,14 +15,11 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.PopupMenu
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
@@ -33,7 +30,7 @@ import com.vandyke.whosdown.ui.permissions.PermissionsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
+class MainActivity : Activity() {
 
     lateinit var viewModel: ViewModel
 
@@ -42,6 +39,10 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /* set action bar title to nothing and overlay it */
+        window.addFlags(Window.FEATURE_ACTION_BAR_OVERLAY)
+        actionBar.title = ""
 
         /* check for contacts permission and that user is authorized on Firebase, launch permissions activity if either is false */
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
@@ -124,21 +125,20 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             userMessage.clearFocus()
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(textView.windowToken, 0)
+            viewModel.message.set(textView.text.toString())
             true
         }
     }
 
-    fun showPopupMenu(view: View) {
-        val popupMenu = PopupMenu(this, view)
-        popupMenu.inflate(R.menu.main_popup)
-        popupMenu.setOnMenuItemClickListener(this)
-        popupMenu.show()
-    }
-
-    override fun onMenuItemClick(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
             R.id.blockContacts -> startActivity(Intent(this, BlockingActivity::class.java))
         }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_action_bar, menu)
         return true
     }
 

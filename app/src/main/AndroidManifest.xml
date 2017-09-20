@@ -31,7 +31,6 @@
         <activity
             android:name=".ui.blocking.BlockingActivity"
             android:parentActivityName=".ui.main.view.MainActivity"
-            android:theme="@style/AppThemeActionBar"
             android:screenOrientation="portrait"
             android:launchMode="singleTask">
         </activity>
