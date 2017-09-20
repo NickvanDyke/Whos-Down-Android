@@ -15,11 +15,14 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.*
-import android.view.animation.AlphaAnimation
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.PopupMenu
 import android.widget.ShareActionProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
@@ -31,21 +34,17 @@ import com.vandyke.whosdown.ui.permissions.PermissionsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : Activity() {
+class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
     lateinit var viewModel: ViewModel
 
     lateinit var shareProvider: ShareActionProvider
 
     val pixelHeight = Resources.getSystem().displayMetrics.heightPixels
-    val downHeight = (pixelHeight * 0.25).toInt()
+    var downWrapContentHeight: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        /* set action bar title to nothing and overlay it */
-        window.addFlags(Window.FEATURE_ACTION_BAR_OVERLAY)
-        actionBar.title = ""
 
         /* check for contacts permission and that user is authorized on Firebase, launch permissions activity if either is false */
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
@@ -64,6 +63,13 @@ class MainActivity : Activity() {
         val params = downLayout.layoutParams as ConstraintLayout.LayoutParams
         params.height = pixelHeight
         downLayout.layoutParams = params
+
+        /* calculate the wrap_content height of downLayout for when it's moved */
+//        downLogo.visibility = View.GONE
+        downLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        downWrapContentHeight = downLayout.measuredHeight
+        downLogo.visibility = View.VISIBLE
 
         /* set RecyclerView stuff */
         val layoutManager = LinearLayoutManager(this)
@@ -87,37 +93,30 @@ class MainActivity : Activity() {
         viewModel.down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable, propertyId: Int) {
                 if ((sender as ObservableBoolean).get()) {
-                    val resizeAnimation = ResizeAnimation(downLayout, pixelHeight, downHeight)
+                    // TODO: maybe fade the logo or something. Should wait until I have an actual logo to see what looks best
+                    val resizeAnimation = ResizeAnimation(downLayout, pixelHeight, downWrapContentHeight)
                     resizeAnimation.duration = 300
-
-                    val fadeAnimation = AlphaAnimation(1.0f, 0.0f)
-                    fadeAnimation.duration = 300
-                    fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
-                        override fun onAnimationEnd(animation: Animation?) {
+                    resizeAnimation.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationEnd(animation: Animation?) {}
+                        override fun onAnimationRepeat(animation: Animation?) {}
+                        override fun onAnimationStart(animation: Animation?) {
                             downLogo.visibility = View.INVISIBLE
                         }
-                        override fun onAnimationRepeat(p0: Animation?) {}
-                        override fun onAnimationStart(p0: Animation?) {}
                     })
 
                     downLayout.startAnimation(resizeAnimation)
-                    downLogo.startAnimation(fadeAnimation)
                 } else {
-                    val resizeAnimation = ResizeAnimation(downLayout, downHeight, pixelHeight)
+                    val resizeAnimation = ResizeAnimation(downLayout, downWrapContentHeight, pixelHeight)
                     resizeAnimation.duration = 300
-
-                    val fadeAnimation = AlphaAnimation(0.0f, 1.0f)
-                    fadeAnimation.duration = 300
-                    fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
+                    resizeAnimation.setAnimationListener(object : Animation.AnimationListener {
                         override fun onAnimationEnd(animation: Animation?) {
                             downLogo.visibility = View.VISIBLE
                         }
-                        override fun onAnimationRepeat(p0: Animation?) {}
-                        override fun onAnimationStart(p0: Animation?) {}
+                        override fun onAnimationRepeat(animation: Animation?) {}
+                        override fun onAnimationStart(animation: Animation?) {}
                     })
 
                     downLayout.startAnimation(resizeAnimation)
-                    downLogo.startAnimation(fadeAnimation)
                 }
             }
         })
@@ -132,15 +131,28 @@ class MainActivity : Activity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.main_popup)
+        popupMenu.setOnMenuItemClickListener(this)
+        popupMenu.show()
+    }
+
+    override fun onMenuItemClick(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
             R.id.blockContacts -> startActivity(Intent(this, BlockingActivity::class.java))
+            R.id.share -> {
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "play store url") // TODO: put play store url here
+                shareIntent.type = "text/plain"
+                startActivity(Intent.createChooser(shareIntent, "Share Who's Down"))
+            }
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_action_bar, menu)
+        menuInflater.inflate(R.menu.main_popup, menu)
         shareProvider = menu.findItem(R.id.share).actionProvider as ShareActionProvider
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.putExtra(Intent.EXTRA_TEXT, "play store url") // TODO: put play store url here
