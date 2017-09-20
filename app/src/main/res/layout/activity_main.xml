@@ -73,19 +73,20 @@
                 android:layout_marginBottom="48dp">
 
                 <EditText
+                    android:enabled="@{viewModel.connected}"
                     android:text="@{viewModel.message}"
                     android:hint="message"
                     android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:inputType="textAutoCorrect"
                     android:ems="10"
                     android:maxLength="100"
                     android:id="@+id/userMessage"
                     android:background="@null"
                     android:padding="8dp"
                     android:imeOptions="actionDone"
-                    android:maxLines="1"/>
+                    android:maxLines="2"/>
 
             </android.support.v7.widget.CardView>
 
@@ -119,6 +120,20 @@
                 android:scrollbars="vertical"/>
 
         </android.support.v4.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:visibility="@{viewModel.connected ? View.GONE : View.VISIBLE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/offlineText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="OFFLINE"
+            android:textSize="36sp"
+            android:translationZ="5dp"
+            android:textColor="@{viewModel.down ? @color/colorPrimary : @color/white}"
+            android:layout_marginBottom="16dp"/>
 
     </android.support.constraint.ConstraintLayout>
 

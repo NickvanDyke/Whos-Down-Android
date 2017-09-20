@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     >
     <item
-        android:id="@+id/blockContacts"
-        android:title="Block contacts"/>
-    <item
         android:id="@+id/share"
         android:title="Share"/>
+    <item
+        android:id="@+id/blockContacts"
+        android:title="Block contacts"/>
 </menu>

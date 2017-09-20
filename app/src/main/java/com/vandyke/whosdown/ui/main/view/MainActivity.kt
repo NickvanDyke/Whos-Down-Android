@@ -44,6 +44,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
     var downWrapContentHeight: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
 
         /* check for contacts permission and that user is authorized on Firebase, launch permissions activity if either is false */
@@ -65,29 +66,9 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         downLayout.layoutParams = params
 
         /* calculate the wrap_content height of downLayout for when it's moved */
-//        downLogo.visibility = View.GONE
         downLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
         downWrapContentHeight = downLayout.measuredHeight
-        downLogo.visibility = View.VISIBLE
-
-        /* set RecyclerView stuff */
-        val layoutManager = LinearLayoutManager(this)
-        peepsList.layoutManager = layoutManager
-        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, layoutManager.orientation))
-        peepsList.adapter = PeepsAdapter(viewModel)
-
-        /* set swipe refresh for peeps list color and function */
-        peepsListSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent))
-        peepsListSwipe.setOnRefreshListener {
-            viewModel.refreshListeners()
-            peepsListSwipe.isRefreshing = false
-        }
-
-        downSwitch.setOnCheckedChangeListener { compoundButton, b ->
-            viewModel.onDownSwitchClicked(b)
-        }
-
 
         /* add a listener that will animate changing the height of the downLayout when down changes */
         viewModel.down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
@@ -121,12 +102,33 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             }
         })
 
-        /* update viewModel message, close the keyboard and clear focus from message box when done is pressed on the keyboard */
+        /* set RecyclerView stuff */
+        val layoutManager = LinearLayoutManager(this)
+        peepsList.layoutManager = layoutManager
+        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, layoutManager.orientation))
+        peepsList.adapter = PeepsAdapter(viewModel)
+
+        /* set swipe refresh for peeps list color and function */
+        peepsListSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimary))
+        peepsListSwipe.setOnRefreshListener {
+            viewModel.refreshListeners()
+            peepsListSwipe.isRefreshing = false
+        }
+
+        downSwitch.setOnCheckedChangeListener { compoundButton, b ->
+            viewModel.onDownSwitchClicked(b)
+        }
+
+        /* update the viewModel's message when the EditText loses focus (which is caused when somewhere else is touched, or done is pressed on kb) */
+        userMessage.onFocusChangeListener = View.OnFocusChangeListener { view, b ->
+            viewModel.message.set((view as EditText).text.toString())
+        }
+
+        /* close the keyboard and clear focus from message box when done is pressed on the keyboard */
         userMessage.setOnEditorActionListener { textView, i, keyEvent ->
             userMessage.clearFocus()
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(textView.windowToken, 0)
-            viewModel.message.set(textView.text.toString())
             true
         }
     }
