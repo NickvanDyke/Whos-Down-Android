@@ -4,7 +4,7 @@
     <item android:drawable="@color/colorPrimary" />
 
     <item
-        android:drawable="@drawable/ic_down_arrow"
+        android:drawable="@drawable/whos_down_logo"
         android:gravity="center" />
 
 </layer-list>
