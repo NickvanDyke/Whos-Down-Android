@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.databinding.*
 import com.vandyke.whosdown.data.Peep
 import com.vandyke.whosdown.ui.main.model.FirebaseModel
+import com.vandyke.whosdown.util.addOnPropertyChangedListener
 
 
 class ViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,17 +21,13 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         model.setUserDbListener()
         model.setDbListeners(application)
 
-        down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-                model.setUserDown((sender as ObservableBoolean).get())
-            }
-        })
+        down.addOnPropertyChangedListener { sender, propertyId ->
+            model.setUserDown((sender as ObservableBoolean).get())
+        }
 
-        message.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-                model.setUserMessage((sender as ObservableField<String>).get())
-            }
-        })
+        message.addOnPropertyChangedListener { sender, propertyId ->
+            model.setUserMessage((sender as ObservableField<String>).get())
+        }
     }
 
     fun refreshListeners() {

@@ -28,6 +28,7 @@ import com.vandyke.whosdown.ui.blocking.BlockingActivity
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
 import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
 import com.vandyke.whosdown.ui.permissions.PermissionsActivity
+import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -62,46 +63,44 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         val downWrapContentHeight = downLayout.measuredHeight
 
         /* add a listener that will animate changing the height of the downLayout when down changes */
-        viewModel.down.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-                if ((sender as ObservableBoolean).get()) {
-                    // TODO: maybe fade the logo or something. Should wait until I have an actual logo to see what looks best
-                    val resizeAnimation = ResizeAnimation(downLayout, pixelHeight, downWrapContentHeight)
-                    resizeAnimation.duration = 300
+        viewModel.down.addOnPropertyChangedListener { sender, propertyId ->
+            if ((sender as ObservableBoolean).get()) {
+                // TODO: maybe fade the logo or something. Should wait until I have an actual logo to see what looks best
+                val resizeAnimation = ResizeAnimation(downLayout, pixelHeight, downWrapContentHeight)
+                resizeAnimation.duration = 300
 
-                    val fadeAnimation = AlphaAnimation(1.0f, 0.0f)
-                    fadeAnimation.duration = 300
-                    fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
-                        override fun onAnimationEnd(animation: Animation?) {
-                            downLogo.visibility = View.INVISIBLE
-                        }
+                val fadeAnimation = AlphaAnimation(1.0f, 0.0f)
+                fadeAnimation.duration = 300
+                fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationEnd(animation: Animation?) {
+                        downLogo.visibility = View.INVISIBLE
+                    }
 
-                        override fun onAnimationRepeat(animation: Animation?) {}
-                        override fun onAnimationStart(animation: Animation?) {
-                        }
-                    })
+                    override fun onAnimationRepeat(animation: Animation?) {}
+                    override fun onAnimationStart(animation: Animation?) {
+                    }
+                })
 
-                    downLogo.startAnimation(fadeAnimation)
-                    downLayout.startAnimation(resizeAnimation)
-                } else {
-                    val resizeAnimation = ResizeAnimation(downLayout, downWrapContentHeight, pixelHeight)
-                    resizeAnimation.duration = 300
+                downLogo.startAnimation(fadeAnimation)
+                downLayout.startAnimation(resizeAnimation)
+            } else {
+                val resizeAnimation = ResizeAnimation(downLayout, downWrapContentHeight, pixelHeight)
+                resizeAnimation.duration = 300
 
-                    val fadeAnimation = AlphaAnimation(0.0f, 1.0f)
-                    fadeAnimation.duration = 300
-                    fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
-                        override fun onAnimationEnd(animation: Animation?) {}
-                        override fun onAnimationRepeat(animation: Animation?) {}
-                        override fun onAnimationStart(animation: Animation?) {
-                            downLogo.visibility = View.VISIBLE
-                        }
-                    })
+                val fadeAnimation = AlphaAnimation(0.0f, 1.0f)
+                fadeAnimation.duration = 300
+                fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationEnd(animation: Animation?) {}
+                    override fun onAnimationRepeat(animation: Animation?) {}
+                    override fun onAnimationStart(animation: Animation?) {
+                        downLogo.visibility = View.VISIBLE
+                    }
+                })
 
-                    downLogo.startAnimation(fadeAnimation)
-                    downLayout.startAnimation(resizeAnimation)
-                }
+                downLogo.startAnimation(fadeAnimation)
+                downLayout.startAnimation(resizeAnimation)
             }
-        })
+        }
 
         /* set peeps list stuff */
         peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, (peepsList.layoutManager as LinearLayoutManager).orientation))
