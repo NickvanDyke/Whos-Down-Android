@@ -10,14 +10,14 @@ class ContactModel(val viewModel: ContactViewModel, val phoneNumber: String) {
     private val auth = FirebaseAuth.getInstance()
 
     init {
-        database.reference.child("subscriptions").child(phoneNumber).addValueEventListener({
+        database.reference.child("users").child(phoneNumber).child("subscribers").child(auth.currentUser!!.phoneNumber).addValueEventListener({
             val value = it.getValue(Boolean::class.java) ?: return@addValueEventListener
             viewModel.subscribed.set(value)
         }, {
 
         })
 
-        database.reference.child("blocked").child(auth.currentUser!!.phoneNumber).child(phoneNumber).addValueEventListener({
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("blocked").child(phoneNumber).addValueEventListener({
             val value = it.getValue(Boolean::class.java) ?: return@addValueEventListener
             viewModel.blocked.set(value)
         }, {
@@ -27,15 +27,15 @@ class ContactModel(val viewModel: ContactViewModel, val phoneNumber: String) {
 
     fun setSubscribed(subscribed: Boolean) {
         if (subscribed)
-            database.reference.child("subscriptions").child(phoneNumber).child(auth.currentUser!!.phoneNumber).setValue(true)
+            database.reference.child("users").child(phoneNumber).child("subscribers").child(auth.currentUser!!.phoneNumber).setValue(true)
         else
-            database.reference.child("subscriptions").child(phoneNumber).child(auth.currentUser!!.phoneNumber).removeValue()
+            database.reference.child("users").child(phoneNumber).child("subscribers").child(auth.currentUser!!.phoneNumber).removeValue()
     }
 
     fun setBlocked(blocked: Boolean) {
         if (blocked)
-            database.reference.child("blocked").child(auth.currentUser!!.phoneNumber).child(phoneNumber).setValue(true)
+            database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("blocked").child(phoneNumber).setValue(true)
         else
-            database.reference.child("blocked").child(auth.currentUser!!.phoneNumber).child(phoneNumber).removeValue()
+            database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("blocked").child(phoneNumber).removeValue()
     }
 }

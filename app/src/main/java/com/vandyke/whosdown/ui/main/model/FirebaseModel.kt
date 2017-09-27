@@ -44,16 +44,16 @@ class FirebaseModel(val viewModel: MainViewModel) {
     }
 
     fun setUserDown(down: Boolean) {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("down").setValue(down)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("status").child("down").setValue(down)
     }
 
     fun setUserMessage(msg: String) {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("message").setValue(msg)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("status").child("message").setValue(msg)
     }
 
     /* adds a listener to the user node for the current local user */
     fun setUserDbListener() {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).addValueEventListener(userListener)
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("status").addValueEventListener(userListener)
     }
 
     fun setDbListeners(context: Context) {
@@ -79,10 +79,10 @@ class FirebaseModel(val viewModel: MainViewModel) {
             val name = cursor.getString(nameCol)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
             if (number != null && !listeners.containsKey(number)) {
-                listeners.put(number, database.reference.child("users").child(number).addValueEventListener(object : ValueEventListener {
+                listeners.put(number, database.reference.child("users").child(number).child("status").addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (!dataSnapshot.exists()) {/* cancel listeners on nodes that don't already exist. Not worth the resources to monitor them */
-                            database.reference.child("users").child(number).removeEventListener(this)
+                            database.reference.child("users").child(number).child("status").removeEventListener(this)
                             listeners.remove(number)
                         }
                         val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
@@ -102,7 +102,7 @@ class FirebaseModel(val viewModel: MainViewModel) {
     }
 
     fun removeAllDbListeners() {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).removeEventListener(userListener)
-        listeners.forEach { database.reference.child("users").child(it.key).removeEventListener(it.value) }
+        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("status").removeEventListener(userListener)
+        listeners.forEach { database.reference.child("users").child(it.key).child("status").removeEventListener(it.value) }
     }
 }

@@ -64,7 +64,6 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         /* add a listener that will animate changing the height of the downLayout when down changes */
         viewModel.down.addOnPropertyChangedListener { sender, propertyId ->
             if ((sender as ObservableBoolean).get()) {
-                // TODO: maybe fade the logo or something. Should wait until I have an actual logo to see what looks best
                 val resizeAnimation = ResizeAnimation(downLayout, pixelHeight, downWrapContentHeight)
                 resizeAnimation.duration = 300
 

@@ -7,13 +7,13 @@ import android.provider.ContactsContract
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import com.vandyke.whosdown.R
-import kotlinx.android.synthetic.main.activity_blocking.*
+import kotlinx.android.synthetic.main.activity_contacts.*
 
 class ContactsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_blocking)
+        setContentView(R.layout.activity_contacts)
 
         actionBar.title = "Contacts"
 
