@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.data.Peep
-import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
+import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 
-class PeepsAdapter(val viewModel: ViewModel) : RecyclerView.Adapter<PeepHolder>() {
+class PeepsAdapter(val viewModel: MainViewModel) : RecyclerView.Adapter<PeepHolder>() {
     init {
         viewModel.peeps.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableList<Peep>>() {
             override fun onChanged(sender: ObservableList<Peep>) {

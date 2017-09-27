@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.vandyke.whosdown.ui.main.viewmodel.ViewModel"/>
+            type="com.vandyke.whosdown.ui.main.viewmodel.MainViewModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

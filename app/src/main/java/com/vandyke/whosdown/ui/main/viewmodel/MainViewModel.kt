@@ -2,13 +2,16 @@ package com.vandyke.whosdown.ui.main.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.databinding.*
+import android.databinding.ObservableArrayList
+import android.databinding.ObservableBoolean
+import android.databinding.ObservableField
+import android.databinding.ObservableList
 import com.vandyke.whosdown.data.Peep
 import com.vandyke.whosdown.ui.main.model.FirebaseModel
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 
 
-class ViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
     val down: ObservableBoolean = ObservableBoolean(false)
     val message: ObservableField<String> = ObservableField("")
     val peeps: ObservableList<Peep> = ObservableArrayList<Peep>()

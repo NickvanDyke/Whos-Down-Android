@@ -1,4 +1,4 @@
-package com.vandyke.whosdown.ui.blocking
+package com.vandyke.whosdown.ui.contacts
 
 import android.app.Activity
 import android.content.CursorLoader
@@ -9,13 +9,13 @@ import android.support.v7.widget.LinearLayoutManager
 import com.vandyke.whosdown.R
 import kotlinx.android.synthetic.main.activity_blocking.*
 
-class BlockingActivity : Activity() {
+class ContactsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blocking)
 
-        actionBar.title = "Block contacts"
+        actionBar.title = "Contacts"
 
         blockingList.addItemDecoration(DividerItemDecoration(blockingList.context, (blockingList.layoutManager as LinearLayoutManager).orientation))
 
@@ -28,6 +28,6 @@ class BlockingActivity : Activity() {
                 null,
                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
-        blockingList.adapter = BlockingAdapter(cursorLoader.loadInBackground())
+        blockingList.adapter = ContactAdapter(cursorLoader.loadInBackground())
     }
 }

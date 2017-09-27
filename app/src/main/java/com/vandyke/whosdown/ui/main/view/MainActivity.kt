@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.databinding.DataBindingUtil
-import android.databinding.Observable
 import android.databinding.ObservableBoolean
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
@@ -24,9 +23,9 @@ import android.widget.PopupMenu
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
-import com.vandyke.whosdown.ui.blocking.BlockingActivity
+import com.vandyke.whosdown.ui.contacts.ContactsActivity
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
-import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
+import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 import com.vandyke.whosdown.ui.permissions.PermissionsActivity
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import kotlinx.android.synthetic.main.activity_main.*
@@ -46,9 +45,9 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             return
         }
 
-        /* instantiate the ViewModel and bind the view to it */
+        /* instantiate the MainViewModel and bind the view to it */
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        val viewModel = ViewModel(application)
+        val viewModel = MainViewModel(application)
         binding.viewModel = viewModel
 
         /* make the downLayout start as filling the entire screen */
@@ -136,7 +135,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
     override fun onMenuItemClick(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.blockContacts -> startActivity(Intent(this, BlockingActivity::class.java))
+            R.id.contacts -> startActivity(Intent(this, ContactsActivity::class.java))
             R.id.share -> {
                 val shareIntent = Intent(Intent.ACTION_SEND)
                 shareIntent.putExtra(Intent.EXTRA_TEXT, "play store url") // TODO: put play store url here

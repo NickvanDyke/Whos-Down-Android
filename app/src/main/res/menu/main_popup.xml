@@ -5,6 +5,6 @@
         android:id="@+id/share"
         android:title="Share"/>
     <item
-        android:id="@+id/blockContacts"
-        android:title="Block contacts"/>
+        android:id="@+id/contacts"
+        android:title="Contacts"/>
 </menu>

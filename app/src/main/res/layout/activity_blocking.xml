@@ -8,6 +8,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vandyke.whosdown.ui.blocking.BlockingActivity"
+    tools:context="com.vandyke.whosdown.ui.contacts.ContactsActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 </android.support.v7.widget.RecyclerView>

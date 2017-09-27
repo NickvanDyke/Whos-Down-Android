@@ -9,13 +9,15 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:screenOrientation="portrait"
+        android:launchMode="singleTask">
         <activity
             android:name=".ui.main.view.MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTask"
-            android:theme="@style/SplashTheme">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -23,15 +25,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.permissions.PermissionsActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask">
+            android:name=".ui.permissions.PermissionsActivity">
         </activity>
         <activity
-            android:name=".ui.blocking.BlockingActivity"
+            android:name=".ui.contacts.ContactsActivity"
             android:parentActivityName=".ui.main.view.MainActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"
+            android:theme="@style/AppThemeActionBar">
+        </activity>
+        <activity
+            android:name=".ui.contact.view.ContactActivity"
             android:theme="@style/AppThemeActionBar">
         </activity>
     </application>

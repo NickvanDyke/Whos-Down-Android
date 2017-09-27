@@ -12,25 +12,22 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.vandyke.whosdown.data.Peep
 import com.vandyke.whosdown.data.UserStatus
-import com.vandyke.whosdown.ui.main.viewmodel.ViewModel
+import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
+import com.vandyke.whosdown.util.addValueEventListener
 import com.vandyke.whosdown.util.getCountryCode
 
-class FirebaseModel(val viewModel: ViewModel) {
+class FirebaseModel(val viewModel: MainViewModel) {
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private val listeners = mutableMapOf<String, ValueEventListener>()
 
     init {
-        database.getReference(".info/connected").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val connected = dataSnapshot.getValue(Boolean::class.java) ?: return
+        database.getReference(".info/connected").addValueEventListener({
+                val connected = it.getValue(Boolean::class.java) ?: return@addValueEventListener
                 viewModel.connected.set(connected)
-            }
-
-            override fun onCancelled(error: DatabaseError?) {
+            }, {
                 TODO("not implemented")
-            }
-        })
+            })
     }
 
     val userListener = object : ValueEventListener {
