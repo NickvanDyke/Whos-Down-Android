@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.vandyke.whosdown.R
-import com.vandyke.whosdown.data.Peep
+import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 
 class PeepsAdapter(val viewModel: MainViewModel) : RecyclerView.Adapter<PeepHolder>() {
@@ -38,11 +38,7 @@ class PeepsAdapter(val viewModel: MainViewModel) : RecyclerView.Adapter<PeepHold
     }
 
     override fun onBindViewHolder(holder: PeepHolder, position: Int) {
-        val peep = viewModel.peeps[position]
-        holder.name.text = peep.name
-        holder.message.text = peep.message
-        holder.number = peep.number
-//        holder.pic.setImageURI(peep.pic)
+        holder.bind(viewModel.peeps[position])
     }
 
     override fun getItemCount(): Int {

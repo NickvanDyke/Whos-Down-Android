@@ -10,6 +10,8 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.ui.main.view.MainActivity
 import kotlinx.android.synthetic.main.activity_permissions.*
@@ -68,6 +70,10 @@ class PermissionsActivity : Activity() {
 
     fun checkStatus() {
         if (hasContactsPermission && loggedIn) {
+            FirebaseDatabase.getInstance().reference.child("users")
+                    .child(FirebaseAuth.getInstance().currentUser!!.phoneNumber)
+                    .child("notificationToken")
+                    .setValue(FirebaseInstanceId.getInstance().token)
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

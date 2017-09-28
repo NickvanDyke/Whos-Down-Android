@@ -6,7 +6,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableList
-import com.vandyke.whosdown.data.Peep
+import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.ui.main.model.FirebaseModel
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 

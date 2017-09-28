@@ -14,11 +14,12 @@ class ContactActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         val phoneNumber = intent.getStringExtra("phoneNumber")
-        if (phoneNumber == null) {
+        val name = intent.getStringExtra("name")
+        if (phoneNumber == null || name == null) {
             finish()
             return
         }
-        actionBar.title = phoneNumber
+        actionBar.title = name
         actionBar.setDisplayHomeAsUpEnabled(true)
 
         val binding = DataBindingUtil.setContentView<ActivityContactBinding>(this, R.layout.activity_contact)

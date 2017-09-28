@@ -22,6 +22,7 @@ class ContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.On
             return
         val intent = Intent(view.context, ContactActivity::class.java)
         intent.putExtra("phoneNumber", number)
+        intent.putExtra("name", name.text.toString())
         view.context.startActivity(intent)
     }
 }

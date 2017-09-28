@@ -3,6 +3,7 @@
           package="com.vandyke.whosdown">
 
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,6 +13,20 @@
         android:theme="@style/AppTheme"
         android:screenOrientation="portrait"
         android:launchMode="singleTask">
+
+        <service
+            android:name=".backend.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".backend.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".ui.main.view.MainActivity"
             android:launchMode="singleTask"

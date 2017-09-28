@@ -38,6 +38,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         super.onCreate(savedInstanceState)
 
         /* check for contacts permission and that user is authorized on Firebase, launch permissions activity if either is false */
+        // TODO: also check for google play services availability, and make it downloadable in the permissionsactivity
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
                 || FirebaseAuth.getInstance().currentUser == null) {
             startActivity(Intent(this, PermissionsActivity::class.java))
