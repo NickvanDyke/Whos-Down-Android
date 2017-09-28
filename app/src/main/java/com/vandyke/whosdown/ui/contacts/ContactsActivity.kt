@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.CursorLoader
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import com.vandyke.whosdown.R
 import kotlinx.android.synthetic.main.activity_contacts.*
 
@@ -17,8 +15,6 @@ class ContactsActivity : Activity() {
 
         actionBar.title = "Contacts"
 
-        blockingList.addItemDecoration(DividerItemDecoration(blockingList.context, (blockingList.layoutManager as LinearLayoutManager).orientation))
-
         val cursorLoader = CursorLoader(this,
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
@@ -28,6 +24,6 @@ class ContactsActivity : Activity() {
                 null,
                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
-        blockingList.adapter = ContactAdapter(cursorLoader.loadInBackground())
+        contactsList.adapter = ContactAdapter(cursorLoader.loadInBackground())
     }
 }

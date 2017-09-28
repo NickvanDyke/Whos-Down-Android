@@ -2,7 +2,7 @@
 <android.support.v7.widget.RecyclerView
     android:orientation="vertical"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-    android:id="@+id/blockingList"
+    android:id="@+id/contactsList"
     android:scrollbars="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"

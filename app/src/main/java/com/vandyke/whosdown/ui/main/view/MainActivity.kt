@@ -11,8 +11,6 @@ import android.databinding.ObservableBoolean
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
@@ -102,7 +100,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         }
 
         /* set peeps list stuff */
-        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, (peepsList.layoutManager as LinearLayoutManager).orientation))
+//        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, (peepsList.layoutManager as LinearLayoutManager).orientation))
         peepsList.adapter = PeepsAdapter(viewModel)
 
         /* set swipe refresh for peeps list color and function */

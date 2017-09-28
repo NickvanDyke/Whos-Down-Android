@@ -1,6 +1,7 @@
 package com.vandyke.whosdown.ui.contacts
 
 import android.database.Cursor
+import android.net.Uri
 import android.provider.ContactsContract
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -27,6 +28,11 @@ class ContactAdapter(val cursor: Cursor) : RecyclerView.Adapter<ContactHolder>()
         holder.name.text = cursor.getString(nameCol)
         val number = cursor.getString(numberCol).toLocalizedE164(holder.itemView.context)
         holder.number = number
+        val imageUriString = cursor.getString(uriCol)
+        if (imageUriString != null)
+            holder.pic.setImageURI(Uri.parse(imageUriString))
+        else
+            holder.pic.setImageResource(R.drawable.person_placeholder)
     }
 
     override fun getItemCount(): Int {
