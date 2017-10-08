@@ -19,7 +19,11 @@
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toRightOf="@+id/peepPic"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        app:layout_constraintRight_toLeftOf="@+id/peepTime"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintHorizontal_bias="0.0"/>
 
     <TextView
         android:text="Message"
@@ -50,4 +54,14 @@
         android:layout_marginTop="4dp"
         app:layout_constraintVertical_bias="0.5"
         android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:text="Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/peepTime"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/peepName"
+        android:layout_marginTop="0dp"/>
 </android.support.constraint.ConstraintLayout>

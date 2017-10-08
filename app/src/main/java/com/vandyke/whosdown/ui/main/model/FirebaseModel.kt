@@ -5,14 +5,12 @@ import android.content.CursorLoader
 import android.provider.ContactsContract
 import android.telephony.PhoneNumberUtils
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.backend.data.UserStatus
 import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 import com.vandyke.whosdown.util.addValueEventListener
+import com.vandyke.whosdown.util.currentUser
 import com.vandyke.whosdown.util.getCountryCode
 
 class FirebaseModel(val viewModel: MainViewModel) {
@@ -22,11 +20,11 @@ class FirebaseModel(val viewModel: MainViewModel) {
 
     init {
         database.getReference(".info/connected").addValueEventListener({
-                val connected = it.getValue(Boolean::class.java) ?: return@addValueEventListener
-                viewModel.connected.set(connected)
-            }, {
-                TODO("not implemented")
-            })
+            val connected = it.getValue(Boolean::class.java) ?: return@addValueEventListener
+            viewModel.connected.set(connected)
+        }, {
+            TODO("not implemented")
+        })
     }
 
     val userListener = object : ValueEventListener {
@@ -43,16 +41,23 @@ class FirebaseModel(val viewModel: MainViewModel) {
     }
 
     fun setUserDown(down: Boolean) {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("status").child("down").setValue(down)
+        currentUser(database, auth).child("status").child("down").setValue(down)
+        if (down)
+            setUserTimestamp()
     }
 
     fun setUserMessage(msg: String) {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("status").child("message").setValue(msg)
+        currentUser(database, auth).child("status").child("message").setValue(msg)
+        setUserTimestamp()
+    }
+
+    fun setUserTimestamp() {
+        currentUser(database, auth).child("status").child("timestamp").setValue(ServerValue.TIMESTAMP)
     }
 
     /* adds a listener to the user node for the current local user */
     fun setUserDbListener() {
-        database.reference.child("users").child(auth.currentUser!!.phoneNumber).child("status").addValueEventListener(userListener)
+        currentUser(database, auth).child("status").addValueEventListener(userListener)
     }
 
     fun setDbListeners(context: Context) {
@@ -75,19 +80,19 @@ class FirebaseModel(val viewModel: MainViewModel) {
             if (number != null && !listeners.containsKey(number)) {
                 listeners.put(number, database.reference.child("users").child(number).child("status").addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (!dataSnapshot.exists()) { /* cancel listeners on nodes that don't already exist. Not worth the resources to monitor them */
+                        if (!dataSnapshot.exists()) { /* cancel listeners on nodes that don't already exist. Probably not worth the resources to monitor them */
                             database.reference.child("users").child(number).child("status").removeEventListener(this)
                             listeners.remove(number)
                         }
                         val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
-                        val peep = Peep(number, userStatus.down, userStatus.message)
+                        val peep = Peep(number, userStatus.down, userStatus.message, userStatus.timestamp)
                         println("peep update: $peep")
                         viewModel.updatePeeps(peep)
                     }
 
                     override fun onCancelled(error: DatabaseError) {
                         listeners.remove(number)
-                        viewModel.updatePeeps(Peep(number, false, ""))
+                        viewModel.updatePeeps(Peep(number, false, "", 0))
                     }
                 }))
             }

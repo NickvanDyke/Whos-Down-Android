@@ -36,14 +36,19 @@ class ContactActivity : Activity() {
         /* set them */
         if (!cursor.moveToFirst()) {
             actionBar.title = cursor.getString(0)
-            contactPic.setImageURI(Uri.parse(cursor.getString(1)))
+            val imageUriString = cursor.getString(0)
+            if (imageUriString != null)
+                contactPic.setImageURI(Uri.parse(imageUriString))
         }
         cursor.close()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            android.R.id.home -> { finish(); return true }
+            android.R.id.home -> {
+                finish()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }

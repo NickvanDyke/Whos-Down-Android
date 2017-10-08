@@ -9,11 +9,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.backend.data.Peep
+import com.vandyke.whosdown.util.phoneNumberUri
 
 class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
     val pic = itemView.findViewById<ImageView>(R.id.peepPic)
     val name = itemView.findViewById<TextView>(R.id.peepName)
     val message = itemView.findViewById<TextView>(R.id.peepMessage)
+    val time = itemView.findViewById<TextView>(R.id.peepTime)
     var number = ""
 
     init {
@@ -22,9 +24,9 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
 
     fun bind(peep: Peep) {
         message.text = peep.message
+        time.text = peep.timestamp.toString()
         number = peep.number
-        val cursor = name.context.contentResolver.query(
-                Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(peep.number)),
+        val cursor = name.context.contentResolver.query(phoneNumberUri(peep.number),
                 arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME,
                         ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI),
                 null,
