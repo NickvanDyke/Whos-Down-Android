@@ -11,7 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.util.toLocalizedE164
 
-class ContactAdapter(val cursor: Cursor) : RecyclerView.Adapter<ContactHolder>() {
+class ContactsAdapter(val cursor: Cursor) : RecyclerView.Adapter<ContactHolder>() {
     val nameCol = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
     val numberCol = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
     val uriCol = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)

@@ -23,6 +23,8 @@ fun String.toLocalizedE164(context: Context): String? {
     return PhoneNumberUtils.formatNumberToE164(this, context.getCountryCode())
 }
 
+fun phoneNumberUri(number: String) = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
+
 fun ContentResolver.getContactName(phoneNumber: String): String {
     val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber))
 

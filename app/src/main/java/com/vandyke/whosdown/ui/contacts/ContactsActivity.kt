@@ -24,6 +24,6 @@ class ContactsActivity : Activity() {
                 null,
                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
-        contactsList.adapter = ContactAdapter(cursorLoader.loadInBackground())
+        contactsList.adapter = ContactsAdapter(cursorLoader.loadInBackground())
     }
 }
