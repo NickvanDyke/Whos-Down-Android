@@ -29,8 +29,6 @@
 
         <activity
             android:name=".ui.main.view.MainActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
