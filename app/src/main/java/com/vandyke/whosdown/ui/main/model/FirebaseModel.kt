@@ -86,11 +86,12 @@ class FirebaseModel(val viewModel: MainViewModel) {
             if (number != null && !listeners.containsKey(number)) {
                 listeners.put(number, database.reference.child("users").child(number).child("status").addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (!dataSnapshot.exists()) { /* cancel listeners on nodes that don't already exist. Probably not worth the resources to monitor them */
+                        val userStatus = dataSnapshot.getValue(UserStatus::class.java)
+                        if (userStatus == null) { /* cancel listeners on nodes that don't already exist. Probably not worth the resources to monitor them */
                             database.reference.child("users").child(number).child("status").removeEventListener(this)
                             listeners.remove(number)
+                            return
                         }
-                        val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
                         val peep = Peep(number, userStatus.down, userStatus.message, userStatus.timestamp)
                         println("peep update: $peep")
                         viewModel.updatePeeps(peep)

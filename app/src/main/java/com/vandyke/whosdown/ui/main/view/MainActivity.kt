@@ -130,6 +130,11 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                 currentFocus.clearFocus()
             false
         }
+
+        downSwitch.setOnCheckedChangeListener { compoundButton, b ->
+            viewModel.down.set(downSwitch.isChecked)
+            viewModel.setUserStatus()
+        }
     }
 
     override fun onMenuItemClick(menuItem: MenuItem): Boolean {

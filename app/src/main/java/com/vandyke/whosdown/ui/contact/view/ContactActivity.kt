@@ -1,6 +1,7 @@
 package com.vandyke.whosdown.ui.contact.view
 
 import android.app.Activity
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
@@ -9,7 +10,7 @@ import android.view.MenuItem
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityContactBinding
 import com.vandyke.whosdown.ui.contact.viewmodel.ContactViewModel
-import com.vandyke.whosdown.util.phoneNumberUri
+import com.vandyke.whosdown.util.toPhoneUri
 import kotlinx.android.synthetic.main.activity_contact.*
 
 class ContactActivity : Activity() {
@@ -30,7 +31,7 @@ class ContactActivity : Activity() {
         binding.viewModel = viewModel
 
         /* look up name and contact picture */
-        val cursor = contentResolver.query(phoneNumberUri(phoneNumber),
+        val cursor = contentResolver.query(phoneNumber.toPhoneUri(),
                 arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.PHOTO_URI),
                 null, null, null)
         /* set them */
@@ -41,6 +42,25 @@ class ContactActivity : Activity() {
                 contactPic.setImageURI(Uri.parse(imageUriString))
         }
         cursor.close()
+        
+        subscribedSwitch.setOnCheckedChangeListener { compoundButton, b -> 
+            viewModel.model.setSubscribed(subscribedSwitch.isChecked)
+        }
+
+        blockedSwitch.setOnCheckedChangeListener { compoundButton, b ->
+            viewModel.model.setBlocked(blockedSwitch.isChecked)
+        }
+
+        contactText.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("sms:" + phoneNumber)
+            startActivity(intent)
+        }
+
+        contactCall.setOnClickListener {
+            val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null))
+            startActivity(intent)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

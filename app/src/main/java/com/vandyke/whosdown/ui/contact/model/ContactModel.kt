@@ -29,14 +29,14 @@ class ContactModel(val viewModel: ContactViewModel, val phoneNumber: String) {
         })
 
         user(phoneNumber, database).child("subscribers").child(auth.currentUser!!.phoneNumber).addValueEventListener({
-            val value = it.getValue(Boolean::class.java) ?: return@addValueEventListener
+            val value = it.getValue(Boolean::class.java) ?: false
             viewModel.subscribed.set(value)
         }, {
 
         })
 
         currentUser(database, auth).child("blocked").child(phoneNumber).addValueEventListener({
-            val value = it.getValue(Boolean::class.java) ?: return@addValueEventListener
+            val value = it.getValue(Boolean::class.java) ?: false
             viewModel.blocked.set(value)
         }, {
 

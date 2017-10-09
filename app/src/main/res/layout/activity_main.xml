@@ -42,7 +42,7 @@
                 app:layout_constraintTop_toTopOf="parent"/>
 
             <Switch
-                android:checked="@={viewModel.down}"
+                android:checked="@{viewModel.down}"
                 android:enabled="@{viewModel.connected}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

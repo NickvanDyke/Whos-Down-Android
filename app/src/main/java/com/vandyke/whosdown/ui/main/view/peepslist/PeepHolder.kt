@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.ui.contact.view.ContactActivity
-import com.vandyke.whosdown.util.phoneNumberUri
+import com.vandyke.whosdown.util.toPhoneUri
 import com.vandyke.whosdown.util.toTimePassedString
 
 class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
@@ -28,7 +28,7 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
         message.text = peep.message
         time.text = peep.timestamp.toTimePassedString()
         number = peep.number
-        val cursor = name.context.contentResolver.query(phoneNumberUri(peep.number),
+        val cursor = name.context.contentResolver.query(peep.number.toPhoneUri(),
                 arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME,
                         ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI),
                 null,

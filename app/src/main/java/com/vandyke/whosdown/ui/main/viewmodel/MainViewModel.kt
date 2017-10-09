@@ -9,7 +9,6 @@ import android.databinding.ObservableList
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.backend.data.UserStatusUpdate
 import com.vandyke.whosdown.ui.main.model.FirebaseModel
-import com.vandyke.whosdown.util.addOnPropertyChangedListener
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -24,11 +23,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         model.setUserDbListener()
         model.setDbListeners(application)
-
-        down.addOnPropertyChangedListener { sender, propertyId ->
-            println("down property changed")
-            setUserStatus()
-        }
     }
 
     fun setUserStatus() {
@@ -40,24 +34,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updatePeeps(updatedPeep: Peep) {
+        /* removing regardless */
+        val index = peeps.indexOfFirst { it.number == updatedPeep.number }
+        if (index != -1)
+            peeps.removeAt(index) /* need to remove using removeAt, otherwise the observable callback method isn't called... */
+
+        /* if the updated peep is down, insert it at the appropriate position (based on timestamp) */
         if (updatedPeep.down) {
-            /* check if updatedPeep already exists in the list, and if it does, update it's message if necessary, then return */
-            peeps.forEachIndexed { i, peep ->
-                if (peep.number == updatedPeep.number) {
-                    if (peep.message == updatedPeep.message && peep.timestamp == updatedPeep.timestamp) {
-                        return
-                    } else {
-                        peeps[i] = updatedPeep /* need to set it to the updatedPeep, changing the existing one won't trigger the observable callback */
-                        return
-                    }
-                }
+            var index = peeps.indexOfFirst { updatedPeep.timestamp > it.timestamp }
+            if (index == -1) {
+                index = if (peeps.isEmpty()) 0 else peeps.size
             }
-            /* if the updatedPeep isn't already in the list, it's added at the beginning */
-            peeps.add(0, updatedPeep)
-        } else { /* else the peep isn't down and will be removed from the list of down peeps */
-            val index = peeps.indexOfFirst { it.number == updatedPeep.number }
-            if (index != -1)
-                peeps.removeAt(index) /* need to remove using removeAt, otherwise the observable callback method isn't called... */
+            peeps.add(index, updatedPeep)
         }
     }
 }
