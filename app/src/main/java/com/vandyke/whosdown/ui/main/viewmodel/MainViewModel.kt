@@ -27,13 +27,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         down.addOnPropertyChangedListener { sender, propertyId ->
             println("down property changed")
-            model.setUserStatus(UserStatusUpdate(down.get(), message.get()))
+            setUserStatus()
         }
+    }
 
-        message.addOnPropertyChangedListener { sender, propertyId ->
-            println("message property changed")
-            model.setUserStatus(UserStatusUpdate(down.get(), message.get()))
-        }
+    fun setUserStatus() {
+        model.setUserStatus(UserStatusUpdate(down.get(), message.get()))
     }
 
     fun refreshListeners() {
@@ -45,7 +44,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             /* check if updatedPeep already exists in the list, and if it does, update it's message if necessary, then return */
             peeps.forEachIndexed { i, peep ->
                 if (peep.number == updatedPeep.number) {
-                    if (peep.message == updatedPeep.message) {
+                    if (peep.message == updatedPeep.message && peep.timestamp == updatedPeep.timestamp) {
                         return
                     } else {
                         peeps[i] = updatedPeep /* need to set it to the updatedPeep, changing the existing one won't trigger the observable callback */

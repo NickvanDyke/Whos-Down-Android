@@ -113,6 +113,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         /* update the viewModel's message and hide the keyboard when the EditText loses focus */
         userMessage.onFocusChangeListener = View.OnFocusChangeListener { view, b ->
             viewModel.message.set((view as EditText).text.toString())
+            viewModel.setUserStatus()
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }

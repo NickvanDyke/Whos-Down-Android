@@ -9,7 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.backend.data.Peep
+import com.vandyke.whosdown.ui.contact.view.ContactActivity
 import com.vandyke.whosdown.util.phoneNumberUri
+import com.vandyke.whosdown.util.toTimePassedString
 
 class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
     val pic = itemView.findViewById<ImageView>(R.id.peepPic)
@@ -24,7 +26,7 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
 
     fun bind(peep: Peep) {
         message.text = peep.message
-        time.text = peep.timestamp.toString()
+        time.text = peep.timestamp.toTimePassedString()
         number = peep.number
         val cursor = name.context.contentResolver.query(phoneNumberUri(peep.number),
                 arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME,
@@ -44,8 +46,8 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
     }
 
     override fun onClick(view: View) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse("sms:" + number)
+        val intent = Intent(view.context, ContactActivity::class.java)
+        intent.putExtra("phoneNumber", number)
         view.context.startActivity(intent)
     }
 }

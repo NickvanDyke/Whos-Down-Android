@@ -24,7 +24,11 @@
             android:src="@drawable/person_placeholder"
             android:id="@+id/contactPic"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"/>
 
         <Switch
             android:enabled="@{!viewModel.blocked &amp;&amp; viewModel.connected}"

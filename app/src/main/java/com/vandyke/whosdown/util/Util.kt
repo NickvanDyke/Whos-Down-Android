@@ -43,6 +43,16 @@ fun ContentResolver.getContactName(phoneNumber: String): String {
     return contactName
 }
 
+fun Long.toTimePassedString(): String {
+    val difference = System.currentTimeMillis() - this
+    return when {
+        difference > 86400000 -> (difference / 86400000).toString() + "d"
+        difference > 3600000 -> (difference / 3600000).toString() + "h"
+        difference > 60000 -> (difference / 60000).toString() + "m"
+        else -> "just now"
+    }
+}
+
 fun BaseObservable.addOnPropertyChangedListener(function: (Observable, Int) -> Unit) {
     this.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable, propertyId: Int) {
