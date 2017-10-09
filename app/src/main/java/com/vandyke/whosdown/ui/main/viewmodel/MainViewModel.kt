@@ -7,6 +7,7 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableList
 import com.vandyke.whosdown.backend.data.Peep
+import com.vandyke.whosdown.backend.data.UserStatusUpdate
 import com.vandyke.whosdown.ui.main.model.FirebaseModel
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 
@@ -25,11 +26,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         model.setDbListeners(application)
 
         down.addOnPropertyChangedListener { sender, propertyId ->
-            model.setUserDown((sender as ObservableBoolean).get())
+            println("down property changed")
+            model.setUserStatus(UserStatusUpdate(down.get(), message.get()))
         }
 
         message.addOnPropertyChangedListener { sender, propertyId ->
-            model.setUserMessage((sender as ObservableField<String>).get())
+            println("message property changed")
+            model.setUserStatus(UserStatusUpdate(down.get(), message.get()))
         }
     }
 

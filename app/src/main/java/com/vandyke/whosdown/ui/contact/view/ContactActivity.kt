@@ -34,9 +34,9 @@ class ContactActivity : Activity() {
                 arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.PHOTO_URI),
                 null, null, null)
         /* set them */
-        if (!cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             actionBar.title = cursor.getString(0)
-            val imageUriString = cursor.getString(0)
+            val imageUriString = cursor.getString(1)
             if (imageUriString != null)
                 contactPic.setImageURI(Uri.parse(imageUriString))
         }

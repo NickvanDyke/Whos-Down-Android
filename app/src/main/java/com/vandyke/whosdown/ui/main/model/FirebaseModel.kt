@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.backend.data.UserStatus
+import com.vandyke.whosdown.backend.data.UserStatusUpdate
 import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 import com.vandyke.whosdown.util.addValueEventListener
 import com.vandyke.whosdown.util.currentUser
@@ -31,13 +32,18 @@ class FirebaseModel(val viewModel: MainViewModel) {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
             println("new UserStatus for local user: $userStatus")
-            viewModel.down.set(userStatus.down)
-            viewModel.message.set(userStatus.message)
+            /* need to compare to current values, otherwise it'll freak out */
+                viewModel.down.set(userStatus.down)
+                viewModel.message.set(userStatus.message)
         }
 
         override fun onCancelled(error: DatabaseError?) {
             TODO("not implemented")
         }
+    }
+
+    fun setUserStatus(status: UserStatusUpdate) {
+        currentUser(database, auth).child("status").setValue(status)
     }
 
     fun setUserDown(down: Boolean) {
@@ -97,6 +103,7 @@ class FirebaseModel(val viewModel: MainViewModel) {
                 }))
             }
         }
+        cursor.close()
     }
 
     fun removeAllDbListeners() {
