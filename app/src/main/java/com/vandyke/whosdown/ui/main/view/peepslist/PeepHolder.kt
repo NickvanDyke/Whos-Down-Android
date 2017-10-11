@@ -2,6 +2,7 @@ package com.vandyke.whosdown.ui.main.view.peepslist
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
 import android.provider.ContactsContract
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.TextView
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.ui.contact.view.ContactActivity
+import com.vandyke.whosdown.util.timePassed
 import com.vandyke.whosdown.util.toPhoneUri
 import com.vandyke.whosdown.util.toTimePassedString
 
@@ -20,11 +22,14 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
     val time = itemView.findViewById<TextView>(R.id.peepTime)
     var number = ""
 
+    val handler = Handler()
+
     init {
         itemView.setOnClickListener(this)
     }
 
     fun bind(peep: Peep) {
+        handler.removeCallbacksAndMessages(null)
         message.text = peep.message
         time.text = peep.timestamp.toTimePassedString()
         number = peep.number
@@ -43,6 +48,16 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
         else
             pic.setImageResource(R.drawable.person_placeholder)
         cursor.close()
+
+        val runnable = object : Runnable {
+            override fun run() {
+                time.text = peep.timestamp.toTimePassedString()
+                handler.postDelayed(this, 60000)
+            }
+        }
+
+        val timeToMinute = 60 - (peep.timestamp.timePassed() / 1000 % 60)
+        handler.postDelayed(runnable, timeToMinute * 1000)
     }
 
     override fun onClick(view: View) {

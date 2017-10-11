@@ -34,10 +34,13 @@ class PeepsAdapter(val viewModel: MainViewModel) : RecyclerView.Adapter<PeepHold
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PeepHolder {
+        println("creating view holder")
         return PeepHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_peep, parent, false))
     }
 
     override fun onBindViewHolder(holder: PeepHolder, position: Int) {
+        println("binding view holder")
+        // TODO: hopefully there's a way to "preload" the recyclerview, and also make it not rebind every time it goes off then comes back
         holder.bind(viewModel.peeps[position])
     }
 

@@ -14,7 +14,7 @@ import com.vandyke.whosdown.util.addValueEventListener
 import com.vandyke.whosdown.util.currentUser
 import com.vandyke.whosdown.util.getCountryCode
 
-class FirebaseModel(val viewModel: MainViewModel) {
+class MainModel(val viewModel: MainViewModel) {
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
     private val listeners = mutableMapOf<String, ValueEventListener>()
@@ -32,9 +32,8 @@ class FirebaseModel(val viewModel: MainViewModel) {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
             println("new UserStatus for local user: $userStatus")
-            /* need to compare to current values, otherwise it'll freak out */
-                viewModel.down.set(userStatus.down)
-                viewModel.message.set(userStatus.message)
+            viewModel.message.set(userStatus.message)
+            viewModel.down.set(userStatus.down)
         }
 
         override fun onCancelled(error: DatabaseError?) {

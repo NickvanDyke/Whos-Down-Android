@@ -3,15 +3,17 @@ package com.vandyke.whosdown.ui.contact.view
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.provider.ContactsContract
 import android.view.MenuItem
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityContactBinding
 import com.vandyke.whosdown.ui.contact.viewmodel.ContactViewModel
+import com.vandyke.whosdown.util.callIntent
+import com.vandyke.whosdown.util.textIntent
 import com.vandyke.whosdown.util.toPhoneUri
 import kotlinx.android.synthetic.main.activity_contact.*
 
@@ -54,14 +56,11 @@ class ContactActivity : Activity() {
         }
 
         contactText.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("sms:" + phoneNumber)
-            startActivity(intent)
+            startActivity(textIntent(phoneNumber))
         }
 
         contactCall.setOnClickListener {
-            val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null))
-            startActivity(intent)
+            startActivity(callIntent(phoneNumber))
         }
     }
 
@@ -79,5 +78,6 @@ class ContactActivity : Activity() {
     override fun onResume() {
         super.onResume()
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancelAll()
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putStringSet("notifications", mutableSetOf()).apply()
     }
 }

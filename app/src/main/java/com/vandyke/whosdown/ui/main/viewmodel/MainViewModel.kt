@@ -8,7 +8,7 @@ import android.databinding.ObservableField
 import android.databinding.ObservableList
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.backend.data.UserStatusUpdate
-import com.vandyke.whosdown.ui.main.model.FirebaseModel
+import com.vandyke.whosdown.ui.main.model.MainModel
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -18,7 +18,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val connected: ObservableBoolean = ObservableBoolean(false)
 
-    private val model = FirebaseModel(this)
+    private val model = MainModel(this)
 
     init {
         model.setUserDbListener()
@@ -35,9 +35,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updatePeeps(updatedPeep: Peep) {
         /* removing regardless */
-        val index = peeps.indexOfFirst { it.number == updatedPeep.number }
-        if (index != -1)
-            peeps.removeAt(index) /* need to remove using removeAt, otherwise the observable callback method isn't called... */
+        val removeIndex = peeps.indexOfFirst { it.number == updatedPeep.number }
+        if (removeIndex != -1)
+            peeps.removeAt(removeIndex) /* need to remove using removeAt, otherwise the observable callback method isn't called... */
 
         /* if the updated peep is down, insert it at the appropriate position (based on timestamp) */
         if (updatedPeep.down) {
