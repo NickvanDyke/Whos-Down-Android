@@ -1,6 +1,8 @@
 package com.vandyke.whosdown.ui.contact.view
 
 import android.app.Activity
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
@@ -71,5 +73,11 @@ class ContactActivity : Activity() {
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    /* cancel all notifications upon resuming */
+    override fun onResume() {
+        super.onResume()
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancelAll()
     }
 }

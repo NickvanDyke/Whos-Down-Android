@@ -2,6 +2,7 @@ package com.vandyke.whosdown.ui.main.view
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -27,7 +28,6 @@ import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 import com.vandyke.whosdown.ui.permissions.PermissionsActivity
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
@@ -110,17 +110,17 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             peepsListSwipe.isRefreshing = false
         }
 
-        /* update the viewModel's message and hide the keyboard when the EditText loses focus */
+        /* hide the keyboard when the EditText loses focus */
         userMessage.onFocusChangeListener = View.OnFocusChangeListener { view, b ->
-            viewModel.message.set((view as EditText).text.toString())
-            viewModel.setUserStatus()
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
-        /* close the keyboard and clear focus from message box when done is pressed on the keyboard */
+        /* when enter is pressed on keyboard, update the viewmodel and set status in the db, and clear focus from the message box */
         userMessage.setOnEditorActionListener { textView, i, keyEvent ->
             userMessage.clearFocus()
+            viewModel.message.set(userMessage.text.toString())
+            viewModel.setUserStatus()
             true
         }
 
@@ -133,6 +133,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
         downSwitch.setOnCheckedChangeListener { compoundButton, b ->
             viewModel.down.set(downSwitch.isChecked)
+            viewModel.message.set(userMessage.text.toString())
             viewModel.setUserStatus()
         }
     }
@@ -155,5 +156,11 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         popupMenu.inflate(R.menu.main_popup)
         popupMenu.setOnMenuItemClickListener(this)
         popupMenu.show()
+    }
+
+    /* cancel all notifications upon resuming */
+    override fun onResume() {
+        super.onResume()
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancelAll()
     }
 }
