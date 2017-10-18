@@ -13,6 +13,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.provider.ContactsContract
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
@@ -28,7 +29,7 @@ import android.widget.PopupMenu
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
-import com.vandyke.whosdown.ui.contacts.ContactsActivity
+import com.vandyke.whosdown.ui.contact.view.ContactActivity
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepHolder
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
 import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
@@ -40,6 +41,8 @@ import com.vandyke.whosdown.util.textIntent
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
+
+    val CONTACT_CODE = 108
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
@@ -209,7 +212,11 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
     override fun onMenuItemClick(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.contacts -> startActivity(Intent(this, ContactsActivity::class.java))
+            R.id.contacts -> {
+                val intent = Intent(Intent.ACTION_PICK)
+                intent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+                startActivityForResult(intent, CONTACT_CODE)
+            }
             R.id.share -> {
                 val shareIntent = Intent(Intent.ACTION_SEND)
                 shareIntent.putExtra(Intent.EXTRA_TEXT, "play store url") // TODO: put play store url here
@@ -218,6 +225,23 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             }
         }
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CONTACT_CODE) {
+                val uri = data?.data
+                val cursor = contentResolver.query(uri,
+                        arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+                        null, null, null)
+                if (cursor != null && cursor.moveToFirst()) {
+                    val intent = Intent(this, ContactActivity::class.java)
+                    intent.putExtra("phoneNumber", cursor.getString(0))
+                    startActivity(intent)
+                }
+                cursor.close()
+            }
+        }
     }
 
     fun showPopupMenu(view: View) {
