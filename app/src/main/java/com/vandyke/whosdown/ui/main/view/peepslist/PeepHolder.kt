@@ -1,6 +1,7 @@
 package com.vandyke.whosdown.ui.main.view.peepslist
 
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
 import android.provider.ContactsContract
@@ -12,7 +13,6 @@ import com.vandyke.whosdown.R
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.ui.contact.view.ContactActivity
 import com.vandyke.whosdown.util.timePassed
-import com.vandyke.whosdown.util.toPhoneUri
 import com.vandyke.whosdown.util.toTimePassedString
 
 class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
@@ -28,26 +28,11 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
         itemView.setOnClickListener(this)
     }
 
-    fun bind(peep: Peep) {
+    fun bind(peep: Peep, cursor: Cursor, numbers: MutableList<String>) {
         handler.removeCallbacksAndMessages(null)
         message.text = peep.message
         time.text = peep.timestamp.toTimePassedString()
         number = peep.number
-        val cursor = name.context.contentResolver.query(peep.number.toPhoneUri(),
-                arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME,
-                        ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI),
-                null,
-                null,
-                null)
-        if (!cursor.moveToFirst())
-            return
-        name.text = cursor.getString(0)
-        val imageUriString = cursor.getString(1)
-        if (imageUriString != null)
-            pic.setImageURI(Uri.parse(imageUriString))
-        else
-            pic.setImageResource(R.drawable.person_placeholder)
-        cursor.close()
 
         val runnable = object : Runnable {
             override fun run() {
@@ -55,9 +40,26 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCli
                 handler.postDelayed(this, 60000)
             }
         }
-
         val timeToMinute = 60 - (peep.timestamp.timePassed() / 1000 % 60)
         handler.postDelayed(runnable, timeToMinute * 1000)
+
+        val nameCol = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+        val uriCol = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
+
+        val index = numbers.indexOfFirst { it == number }
+        if (index == -1) {
+            name.text = "null"
+            pic.setImageResource(R.drawable.person_placeholder)
+            return
+        }
+
+        cursor.moveToPosition(index)
+        name.text = cursor.getString(nameCol)
+        val imageUriString = cursor.getString(uriCol)
+        if (imageUriString != null)
+            pic.setImageURI(Uri.parse(imageUriString))
+        else
+            pic.setImageResource(R.drawable.person_placeholder)
     }
 
     override fun onClick(view: View) {

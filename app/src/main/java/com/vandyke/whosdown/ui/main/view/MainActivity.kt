@@ -114,7 +114,8 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
         /* set peeps list stuff */
 //        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, (peepsList.layoutManager as LinearLayoutManager).orientation))
-        peepsList.adapter = PeepsAdapter(viewModel)
+        val peepsAdapter = PeepsAdapter(viewModel, this)
+        peepsList.adapter = peepsAdapter
         peepsList.setHasFixedSize(true)
         val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             val leftIcon = getBitmapFromVectorDrawable(this@MainActivity, R.drawable.ic_call)
@@ -177,6 +178,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         /* set swipe refresh for peeps list color and function */
         peepsListSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimary))
         peepsListSwipe.setOnRefreshListener {
+            peepsAdapter.setupCursorAndNumbersList(this)
             viewModel.refreshListeners()
             peepsListSwipe.isRefreshing = false
         }

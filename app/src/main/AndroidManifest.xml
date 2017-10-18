@@ -43,13 +43,6 @@
             android:launchMode="singleTask">
         </activity>
         <activity
-            android:name=".ui.contacts.ContactsActivity"
-            android:parentActivityName=".ui.main.view.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeActionBar"
-            android:launchMode="singleTask">
-        </activity>
-        <activity
             android:name=".ui.contact.view.ContactActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeActionBar">
