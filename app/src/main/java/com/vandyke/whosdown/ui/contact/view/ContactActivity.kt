@@ -8,11 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.ContactsContract
+import android.telephony.PhoneNumberUtils
 import android.view.MenuItem
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityContactBinding
 import com.vandyke.whosdown.ui.contact.viewmodel.ContactViewModel
 import com.vandyke.whosdown.util.callIntent
+import com.vandyke.whosdown.util.getCountryCode
 import com.vandyke.whosdown.util.textIntent
 import com.vandyke.whosdown.util.toPhoneUri
 import kotlinx.android.synthetic.main.activity_contact.*
@@ -22,7 +24,12 @@ class ContactActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val phoneNumber = intent.getStringExtra("phoneNumber")
+        var phoneNumber = intent.getStringExtra("phoneNumber")
+        if (phoneNumber == null) {
+            finish()
+            return
+        }
+        phoneNumber = PhoneNumberUtils.formatNumberToE164(phoneNumber, getCountryCode())
         if (phoneNumber == null) {
             finish()
             return
@@ -39,7 +46,7 @@ class ContactActivity : Activity() {
                 arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.PHOTO_URI),
                 null, null, null)
         /* set them */
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             actionBar.title = cursor.getString(0)
             val imageUriString = cursor.getString(1)
             if (imageUriString != null)

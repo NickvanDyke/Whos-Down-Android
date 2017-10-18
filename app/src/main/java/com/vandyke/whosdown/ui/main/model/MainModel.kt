@@ -5,7 +5,10 @@ import android.content.CursorLoader
 import android.provider.ContactsContract
 import android.telephony.PhoneNumberUtils
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.backend.data.UserStatus
 import com.vandyke.whosdown.backend.data.UserStatusUpdate
@@ -13,6 +16,7 @@ import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 import com.vandyke.whosdown.util.addValueEventListener
 import com.vandyke.whosdown.util.currentUser
 import com.vandyke.whosdown.util.getCountryCode
+import com.vandyke.whosdown.util.user
 
 class MainModel(val viewModel: MainViewModel) {
     private val database = FirebaseDatabase.getInstance()
@@ -45,21 +49,6 @@ class MainModel(val viewModel: MainViewModel) {
         currentUser(database, auth).child("status").setValue(status)
     }
 
-    fun setUserDown(down: Boolean) {
-        currentUser(database, auth).child("status").child("down").setValue(down)
-        if (down)
-            setUserTimestamp()
-    }
-
-    fun setUserMessage(msg: String) {
-        currentUser(database, auth).child("status").child("message").setValue(msg)
-        setUserTimestamp()
-    }
-
-    fun setUserTimestamp() {
-        currentUser(database, auth).child("status").child("timestamp").setValue(ServerValue.TIMESTAMP)
-    }
-
     /* adds a listener to the user node for the current local user */
     fun setUserDbListener() {
         currentUser(database, auth).child("status").addValueEventListener(userListener)
@@ -83,11 +72,11 @@ class MainModel(val viewModel: MainViewModel) {
             cursor.moveToPosition(i)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
             if (number != null && !listeners.containsKey(number)) {
-                listeners.put(number, database.reference.child("users").child(number).child("status").addValueEventListener(object : ValueEventListener {
+                listeners.put(number, user(number, database).child("status").addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val userStatus = dataSnapshot.getValue(UserStatus::class.java)
                         if (userStatus == null) { /* cancel listeners on nodes that don't already exist. Probably not worth the resources to monitor them */
-                            database.reference.child("users").child(number).child("status").removeEventListener(this)
+                            user(number, database).child("status").removeEventListener(this)
                             listeners.remove(number)
                             return
                         }
