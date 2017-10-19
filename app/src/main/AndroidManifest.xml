@@ -25,6 +25,8 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".backend.NotificationDismissedReceiver"/>
+
         <activity
             android:name=".ui.main.view.MainActivity"
             android:screenOrientation="portrait"
@@ -45,6 +47,8 @@
         <activity
             android:name=".ui.contact.view.ContactActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.main.view.MainActivity"
             android:theme="@style/AppThemeActionBar">
         </activity>
     </application>

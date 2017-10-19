@@ -2,7 +2,6 @@ package com.vandyke.whosdown.backend
 
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -31,13 +30,16 @@ class FcmService : FirebaseMessagingService() {
             val builder = NotificationCompat.Builder(applicationContext)
                     .setSmallIcon(R.drawable.whos_down_logo)
                     .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+                    .setDeleteIntent(PendingIntent.getBroadcast(this, 0,
+                            Intent(this, NotificationDismissedReceiver::class.java), 0))
 
             if (people.size == 1) {
                 val contactIntent = Intent(this, ContactActivity::class.java)
                 contactIntent.putExtra("phoneNumber", phoneNumber)
 
-                val pendingIntent = TaskStackBuilder.create(this).addNextIntent(Intent(this, MainActivity::class.java))
-                        .addNextIntent(contactIntent).getPendingIntent(100, 0)
+                val pendingIntent = PendingIntent.getActivities(this, 0,
+                        arrayOf(Intent(this, MainActivity::class.java), contactIntent),
+                        PendingIntent.FLAG_UPDATE_CURRENT)
 
                 builder.setContentTitle("$name is down!")
                         .setContentText(message)
