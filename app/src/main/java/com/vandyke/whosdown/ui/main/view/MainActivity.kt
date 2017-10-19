@@ -124,7 +124,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             }
         }
 
-        /* when enter is pressed on keyboard, update the viewmodel and set status in the db, and clear focus from the message box */
+        /* when enter is pressed on keyboard, set status in the db, and clear focus from the message box */
         userMessage.setOnEditorActionListener { textView, i, keyEvent ->
             userMessage.clearFocus()
             viewModel.setUserStatus()

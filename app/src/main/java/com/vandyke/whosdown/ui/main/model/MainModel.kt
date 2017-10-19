@@ -27,7 +27,7 @@ class MainModel(val viewModel: MainViewModel) {
             val connected = it.getValue(Boolean::class.java) ?: return@addValueEventListener
             viewModel.connected.set(connected)
         }, {
-            TODO("not implemented")
+
         })
     }
 
@@ -42,7 +42,7 @@ class MainModel(val viewModel: MainViewModel) {
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("not implemented")
+
         }
     }
 
@@ -63,7 +63,7 @@ class MainModel(val viewModel: MainViewModel) {
                         ContactsContract.Contacts.LOOKUP_KEY),
                 null,
                 null,
-                null)
+                null) ?: return
 
         val numberCol = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
         val nameCol = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
@@ -72,7 +72,7 @@ class MainModel(val viewModel: MainViewModel) {
 
         val countryCode = context.getCountryCode()
 
-        /* add a listener to the user phoneNumber of each contact's phone phoneNumber */
+        /* add a listener to the user phoneNumber of each contact's phone number */
         for (i in 0 until cursor.count) {
             cursor.moveToPosition(i)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
