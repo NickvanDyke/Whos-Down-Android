@@ -17,7 +17,7 @@ class ContactModel(val viewModel: ContactViewModel, val phoneNumber: String) {
             val connected = it.getValue(Boolean::class.java) ?: return@addValueEventListener
             viewModel.connected.set(connected)
         }, {
-            TODO("not implemented")
+
         })
 
         user(phoneNumber, database).child("status").addValueEventListener({

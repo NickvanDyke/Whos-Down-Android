@@ -48,4 +48,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             peeps.add(index, updatedPeep)
         }
     }
+
+    fun removePeep(phoneNumber: String) {
+        val index = peeps.indexOfFirst { it.number == phoneNumber }
+        if (index != -1)
+            peeps.removeAt(index)
+    }
 }

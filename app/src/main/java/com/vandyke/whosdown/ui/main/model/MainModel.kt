@@ -1,7 +1,6 @@
 package com.vandyke.whosdown.ui.main.model
 
 import android.content.Context
-import android.content.CursorLoader
 import android.provider.ContactsContract
 import android.telephony.PhoneNumberUtils
 import com.google.firebase.auth.FirebaseAuth
@@ -40,7 +39,7 @@ class MainModel(val viewModel: MainViewModel) {
             viewModel.down.set(userStatus.down)
         }
 
-        override fun onCancelled(error: DatabaseError?) {
+        override fun onCancelled(error: DatabaseError) {
             TODO("not implemented")
         }
     }
@@ -55,15 +54,17 @@ class MainModel(val viewModel: MainViewModel) {
     }
 
     fun setDbListeners(context: Context) {
-        val cursorLoader = CursorLoader(context,
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+        val cursor = context.contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI),
                 null,
                 null,
                 null)
 
-        val cursor = cursorLoader.loadInBackground()
         val numberCol = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+        val nameCol = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+        val photoUriCol = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
 
         val countryCode = context.getCountryCode()
 
@@ -71,6 +72,8 @@ class MainModel(val viewModel: MainViewModel) {
         for (i in 0 until cursor.count) {
             cursor.moveToPosition(i)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
+            val name = cursor.getString(nameCol)
+            val photoUri = cursor.getString(photoUriCol)
             if (number != null && !listeners.containsKey(number)) {
                 listeners.put(number, user(number, database).child("status").addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -80,14 +83,14 @@ class MainModel(val viewModel: MainViewModel) {
                             listeners.remove(number)
                             return
                         }
-                        val peep = Peep(number, userStatus.down, userStatus.message, userStatus.timestamp)
+                        val peep = Peep(number, name, photoUri, userStatus.down, userStatus.message, userStatus.timestamp)
                         println("peep update: $peep")
                         viewModel.updatePeeps(peep)
                     }
 
                     override fun onCancelled(error: DatabaseError) {
                         listeners.remove(number)
-                        viewModel.updatePeeps(Peep(number, false, "", 0))
+                        viewModel.removePeep(number)
                     }
                 }))
             }

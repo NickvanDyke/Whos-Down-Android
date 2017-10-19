@@ -1,22 +1,16 @@
 package com.vandyke.whosdown.ui.contact.view
 
 import android.app.Activity
-import android.app.NotificationManager
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.provider.ContactsContract
 import android.telephony.PhoneNumberUtils
 import android.view.MenuItem
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityContactBinding
 import com.vandyke.whosdown.ui.contact.viewmodel.ContactViewModel
-import com.vandyke.whosdown.util.callIntent
-import com.vandyke.whosdown.util.getCountryCode
-import com.vandyke.whosdown.util.textIntent
-import com.vandyke.whosdown.util.toPhoneUri
+import com.vandyke.whosdown.util.*
 import kotlinx.android.synthetic.main.activity_contact.*
 
 class ContactActivity : Activity() {
@@ -43,7 +37,8 @@ class ContactActivity : Activity() {
 
         /* look up name and contact picture */
         val cursor = contentResolver.query(phoneNumber.toPhoneUri(),
-                arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.PHOTO_URI),
+                arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME_PRIMARY,
+                        ContactsContract.PhoneLookup.PHOTO_URI),
                 null, null, null)
         /* set them */
         if (cursor != null && cursor.moveToFirst()) {
@@ -52,7 +47,7 @@ class ContactActivity : Activity() {
             if (imageUriString != null)
                 contactPic.setImageURI(Uri.parse(imageUriString))
         }
-        cursor.close()
+        cursor?.close()
         
         subscribedSwitch.setOnCheckedChangeListener { compoundButton, b -> 
             viewModel.model.setSubscribed(subscribedSwitch.isChecked)
@@ -84,7 +79,6 @@ class ContactActivity : Activity() {
     /* cancel all notifications upon resuming */
     override fun onResume() {
         super.onResume()
-        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancelAll()
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putStringSet("notifications", mutableSetOf()).apply()
+        clearNotifications(this)
     }
 }

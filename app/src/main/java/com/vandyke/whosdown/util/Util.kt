@@ -1,6 +1,6 @@
 package com.vandyke.whosdown.util
 
-import android.content.ContentResolver
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Context.TELEPHONY_SERVICE
 import android.content.Intent
@@ -10,12 +10,17 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
+import android.preference.PreferenceManager
 import android.provider.ContactsContract
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.telephony.PhoneNumberUtils
 import android.telephony.TelephonyManager
 
+fun clearNotifications(context: Context) {
+    (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancelAll()
+    PreferenceManager.getDefaultSharedPreferences(context).edit().putStringSet("notifications", mutableSetOf()).apply()
+}
 
 fun Context.getCountryCode(): String {
     return (getSystemService(TELEPHONY_SERVICE) as TelephonyManager).networkCountryIso.toUpperCase()
@@ -26,24 +31,6 @@ fun String.toLocalizedE164(context: Context): String? {
 }
 
 fun String.toPhoneUri(): Uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(this))
-
-fun ContentResolver.getContactName(phoneNumber: String): String {
-    val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber))
-
-    val projection = arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME)
-
-    var contactName = ""
-    val cursor = this.query(uri, projection, null, null, null)
-
-    if (cursor != null) {
-        if (cursor.moveToFirst()) {
-            contactName = cursor.getString(0)
-        }
-        cursor.close()
-    }
-
-    return contactName
-}
 
 fun Long.toTimePassedString(): String {
     val difference = System.currentTimeMillis() - this
