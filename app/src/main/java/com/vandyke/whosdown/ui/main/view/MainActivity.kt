@@ -26,7 +26,7 @@ import com.vandyke.whosdown.databinding.ActivityMainBinding
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
 import com.vandyke.whosdown.ui.main.view.peepslist.SlideCallback
 import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
-import com.vandyke.whosdown.ui.permissions.PermissionsActivity
+import com.vandyke.whosdown.ui.permissions.RequirementsActivity
 import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import com.vandyke.whosdown.util.clearNotifications
@@ -44,7 +44,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         // TODO: also check for google play services availability, and make it downloadable in the permissionsactivity
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
                 || FirebaseAuth.getInstance().currentUser == null) {
-            startActivity(Intent(this, PermissionsActivity::class.java))
+            startActivity(Intent(this, RequirementsActivity::class.java))
             finish()
             return
         }

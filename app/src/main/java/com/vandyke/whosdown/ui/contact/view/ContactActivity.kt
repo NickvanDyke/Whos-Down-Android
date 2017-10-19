@@ -33,6 +33,7 @@ class ContactActivity : Activity() {
             finish()
             return
         }
+        actionBar.elevation = 0f
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.title = phoneNumber
 
@@ -56,12 +57,12 @@ class ContactActivity : Activity() {
         }
         cursor?.close()
 
-        subscribedSwitch.setOnCheckedChangeListener { compoundButton, b ->
-            viewModel.model.setSubscribed(subscribedSwitch.isChecked)
+        followButton.setOnClickListener {
+
         }
 
-        blockedSwitch.setOnCheckedChangeListener { compoundButton, b ->
-            viewModel.model.setBlocked(blockedSwitch.isChecked)
+        blockButton.setOnClickListener {
+
         }
 
         contactText.setOnClickListener {

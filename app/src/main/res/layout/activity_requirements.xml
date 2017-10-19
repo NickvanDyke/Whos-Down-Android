@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="@color/colorPrimary">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/whos_down_logo"
+        android:id="@+id/permissionsLogo"/>
+
     <TextView
+        android:maxWidth="512dp"
         android:gravity="center"
         android:padding="16dp"
         android:layout_width="wrap_content"
@@ -15,21 +23,26 @@
         android:textColor="@color/white"
         android:text="Who's Down uses phone numbers to identify its users. Please grant access to your contacts so Who's Down knows who to display to you, and also verify your phone number so your friends can see you on Who's Down. Your contacts information is not used for anything but this."/>
 
-    <Button
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"
         android:id="@+id/contactsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="requestContactsPermission"
         android:text="Grant contacts permission"
-        android:background="@null"
-        android:textColor="@color/white"/>
+        android:background="@drawable/button_shape_no_fill"
+        android:textColor="@color/white"
+        app:spinning_bar_color="@color/colorPrimary"/>
 
-    <Button
-        android:id="@+id/logInButton"
-        android:onClick="logIn"
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/verifyButton"
+        android:padding="16dp"
+        android:onClick="verify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Verify phone number"
-        android:background="@null"
-        android:textColor="@color/white"/>
+        android:background="@drawable/button_shape_no_fill"
+        android:textColor="@color/white"
+        app:spinning_bar_color="@color/colorPrimary"/>
 </LinearLayout>

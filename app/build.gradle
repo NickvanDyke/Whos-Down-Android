@@ -55,6 +55,8 @@ dependencies {
     kapt 'com.android.databinding:compiler:2.3.2'
 
     compile 'de.hdodenhof:circleimageview:2.1.0'
+
+    compile 'br.com.simplepass:loading-button-android:1.8.3'
 }
 
 repositories {

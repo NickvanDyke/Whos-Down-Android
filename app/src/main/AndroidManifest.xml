@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.permissions.PermissionsActivity"
+            android:name=".ui.permissions.RequirementsActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask">
         </activity>
