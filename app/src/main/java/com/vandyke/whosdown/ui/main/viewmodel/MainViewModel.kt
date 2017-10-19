@@ -9,6 +9,7 @@ import android.databinding.ObservableList
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.backend.data.UserStatusUpdate
 import com.vandyke.whosdown.ui.main.model.MainModel
+import com.vandyke.whosdown.util.addOnPropertyChangedListener
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,9 +21,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val model = MainModel(this)
 
+    /* set to true when the model is modifying down and message, and checked before modifying the model,
+       so that changes from the model don't trigger more things. Maybe there's a better way to do this? */
+    var modelMakingChanges = true
+
     init {
         model.setUserDbListener()
         model.setDbListeners(application)
+
+        /* need to do this here because setting an onCheckedChangeListener for the down switch doesn't work for some reason, maybe due to data binding */
+        down.addOnPropertyChangedListener { observable, i ->
+            if (!modelMakingChanges)
+                setUserStatus()
+        }
     }
 
     fun setUserStatus() {
@@ -34,7 +45,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updatePeeps(updatedPeep: Peep) {
-        /* removing regardless */
+        /* remove regardless */
         val removeIndex = peeps.indexOfFirst { it.number == updatedPeep.number }
         if (removeIndex != -1)
             peeps.removeAt(removeIndex) /* need to remove using removeAt, otherwise the observable callback method isn't called... */

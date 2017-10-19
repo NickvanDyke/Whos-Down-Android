@@ -7,9 +7,8 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.DisplayMetrics
 import com.vandyke.whosdown.R
-import com.vandyke.whosdown.util.callIntent
+import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.getBitmapFromVectorDrawable
-import com.vandyke.whosdown.util.textIntent
 
 class SlideCallback(val context: Context, val list: RecyclerView) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     private val leftIcon = getBitmapFromVectorDrawable(context, R.drawable.ic_call)
@@ -24,8 +23,8 @@ class SlideCallback(val context: Context, val list: RecyclerView) : ItemTouchHel
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         when (direction) {
-            ItemTouchHelper.RIGHT -> context.startActivity(callIntent((viewHolder as PeepHolder).number))
-            ItemTouchHelper.LEFT -> context.startActivity(textIntent((viewHolder as PeepHolder).number))
+            ItemTouchHelper.RIGHT -> context.startActivity(Intents.call((viewHolder as PeepHolder).phoneNumber))
+            ItemTouchHelper.LEFT -> context.startActivity(Intents.text((viewHolder as PeepHolder).phoneNumber))
         }
         list.adapter.notifyItemChanged(viewHolder.adapterPosition)
     }

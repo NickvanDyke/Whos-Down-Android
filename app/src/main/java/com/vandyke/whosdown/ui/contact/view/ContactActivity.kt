@@ -10,10 +10,15 @@ import android.view.MenuItem
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityContactBinding
 import com.vandyke.whosdown.ui.contact.viewmodel.ContactViewModel
-import com.vandyke.whosdown.util.*
+import com.vandyke.whosdown.util.Intents
+import com.vandyke.whosdown.util.clearNotifications
+import com.vandyke.whosdown.util.getCountryCode
+import com.vandyke.whosdown.util.toPhoneUri
 import kotlinx.android.synthetic.main.activity_contact.*
 
 class ContactActivity : Activity() {
+
+    var lookupKey: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,21 +40,23 @@ class ContactActivity : Activity() {
         val viewModel = ContactViewModel(application, phoneNumber)
         binding.viewModel = viewModel
 
-        /* look up name and contact picture */
+        /* look up name and contact picture and lookup key*/
         val cursor = contentResolver.query(phoneNumber.toPhoneUri(),
                 arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME_PRIMARY,
-                        ContactsContract.PhoneLookup.PHOTO_URI),
+                        ContactsContract.PhoneLookup.PHOTO_URI,
+                        ContactsContract.PhoneLookup.LOOKUP_KEY),
                 null, null, null)
         /* set them */
         if (cursor != null && cursor.moveToFirst()) {
             actionBar.title = cursor.getString(0)
+            lookupKey = cursor.getString(2)
             val imageUriString = cursor.getString(1)
             if (imageUriString != null)
                 contactPic.setImageURI(Uri.parse(imageUriString))
         }
         cursor?.close()
-        
-        subscribedSwitch.setOnCheckedChangeListener { compoundButton, b -> 
+
+        subscribedSwitch.setOnCheckedChangeListener { compoundButton, b ->
             viewModel.model.setSubscribed(subscribedSwitch.isChecked)
         }
 
@@ -58,11 +65,16 @@ class ContactActivity : Activity() {
         }
 
         contactText.setOnClickListener {
-            startActivity(textIntent(phoneNumber))
+            startActivity(Intents.text(phoneNumber))
         }
 
         contactCall.setOnClickListener {
-            startActivity(callIntent(phoneNumber))
+            startActivity(Intents.call(phoneNumber))
+        }
+
+        contactPic.setOnClickListener {
+            if (lookupKey != null)
+                startActivity(Intents.viewContact(lookupKey!!))
         }
     }
 

@@ -35,8 +35,10 @@ class MainModel(val viewModel: MainViewModel) {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             val userStatus = dataSnapshot.getValue(UserStatus::class.java) ?: return
             println("new UserStatus for local user: $userStatus")
+            viewModel.modelMakingChanges = true
             viewModel.message.set(userStatus.message)
             viewModel.down.set(userStatus.down)
+            viewModel.modelMakingChanges = false
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -57,7 +59,8 @@ class MainModel(val viewModel: MainViewModel) {
         val cursor = context.contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
                         ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI),
+                        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
+                        ContactsContract.Contacts.LOOKUP_KEY),
                 null,
                 null,
                 null)
@@ -65,14 +68,16 @@ class MainModel(val viewModel: MainViewModel) {
         val numberCol = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
         val nameCol = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
         val photoUriCol = cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
+        val lookupCol = cursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)
 
         val countryCode = context.getCountryCode()
 
-        /* add a listener to the user number of each contact's phone number */
+        /* add a listener to the user phoneNumber of each contact's phone phoneNumber */
         for (i in 0 until cursor.count) {
             cursor.moveToPosition(i)
             val number = PhoneNumberUtils.formatNumberToE164(cursor.getString(numberCol), countryCode)
             val name = cursor.getString(nameCol)
+            val lookupKey = cursor.getString(lookupCol)
             val photoUri = cursor.getString(photoUriCol)
             if (number != null && !listeners.containsKey(number)) {
                 listeners.put(number, user(number, database).child("status").addValueEventListener(object : ValueEventListener {
@@ -83,7 +88,7 @@ class MainModel(val viewModel: MainViewModel) {
                             listeners.remove(number)
                             return
                         }
-                        val peep = Peep(number, name, photoUri, userStatus.down, userStatus.message, userStatus.timestamp)
+                        val peep = Peep(number, name, lookupKey, photoUri, userStatus.down, userStatus.message, userStatus.timestamp)
                         println("peep update: $peep")
                         viewModel.updatePeeps(peep)
                     }

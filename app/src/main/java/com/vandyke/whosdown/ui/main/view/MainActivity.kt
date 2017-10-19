@@ -23,11 +23,11 @@ import android.widget.PopupMenu
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
-import com.vandyke.whosdown.ui.contact.view.ContactActivity
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
 import com.vandyke.whosdown.ui.main.view.peepslist.SlideCallback
 import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
 import com.vandyke.whosdown.ui.permissions.PermissionsActivity
+import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import com.vandyke.whosdown.util.clearNotifications
 import kotlinx.android.synthetic.main.activity_main.*
@@ -119,9 +119,8 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
         /* hide the keyboard when the EditText loses focus */
         userMessage.onFocusChangeListener = View.OnFocusChangeListener { view, b ->
-            if (userMessage.hasFocus()) {
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(view.windowToken, 0)
+            if (!userMessage.hasFocus()) {
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(view.windowToken, 0)
             }
         }
 
@@ -137,11 +136,6 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             if (currentFocus is EditText)
                 currentFocus.clearFocus()
             false
-        }
-
-        // TODO: fix message being overriden
-        downSwitch.setOnCheckedChangeListener { compoundButton, b ->
-            viewModel.setUserStatus()
         }
     }
 
@@ -170,9 +164,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                         arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
                         null, null, null)
                 if (cursor != null && cursor.moveToFirst()) {
-                    val intent = Intent(this, ContactActivity::class.java)
-                    intent.putExtra("phoneNumber", cursor.getString(0))
-                    startActivity(intent)
+                    startActivity(Intents.contactActivity(this, cursor.getString(0)))
                 }
                 cursor?.close()
             }

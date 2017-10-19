@@ -1,6 +1,5 @@
 package com.vandyke.whosdown.ui.main.view.peepslist
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
@@ -9,9 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.backend.data.Peep
-import com.vandyke.whosdown.ui.contact.view.ContactActivity
+import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.timePassed
-import com.vandyke.whosdown.util.toPhoneUri
 import com.vandyke.whosdown.util.toTimePassedString
 
 class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -20,19 +18,17 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val message = itemView.findViewById<TextView>(R.id.peepMessage)
     private val time = itemView.findViewById<TextView>(R.id.peepTime)
 
-    var number = ""
+    var phoneNumber = ""
+    var lookupKey = ""
     val handler = Handler()
 
     init {
         itemView.setOnClickListener {
-            val intent = Intent(itemView.context, ContactActivity::class.java)
-            intent.putExtra("phoneNumber", number)
-            itemView.context.startActivity(intent)
+            itemView.context.startActivity(Intents.contactActivity(itemView.context, phoneNumber))
         }
 
         pic.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, number.toPhoneUri())
-            itemView.context.startActivity(intent)
+            itemView.context.startActivity(Intents.viewContact(lookupKey))
         }
     }
 
@@ -41,7 +37,8 @@ class PeepHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         name.text = peep.name
         message.text = peep.message
         time.text = peep.timestamp.toTimePassedString()
-        number = peep.number
+        phoneNumber = peep.number
+        lookupKey = peep.lookupKey
         if (peep.photoUriString != null)
             pic.setImageURI(Uri.parse(peep.photoUriString))
         else

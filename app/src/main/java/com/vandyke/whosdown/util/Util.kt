@@ -3,7 +3,6 @@ package com.vandyke.whosdown.util
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Context.TELEPHONY_SERVICE
-import android.content.Intent
 import android.databinding.BaseObservable
 import android.databinding.Observable
 import android.graphics.Bitmap
@@ -51,14 +50,6 @@ fun BaseObservable.addOnPropertyChangedListener(function: (Observable, Int) -> U
         }
     })
 }
-
-fun textIntent(number: String): Intent {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse("sms:" + number)
-    return intent
-}
-
-fun callIntent(number: String) = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null))
 
 fun getBitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap {
     var drawable = ContextCompat.getDrawable(context, drawableId)
