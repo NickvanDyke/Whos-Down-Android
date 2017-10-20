@@ -17,11 +17,13 @@
     <TextView
         android:maxWidth="512dp"
         android:gravity="center"
-        android:padding="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:text="Who's Down uses phone numbers to identify its users. Please grant access to your contacts so Who's Down knows who to display to you, and also verify your phone number so your friends can see you on Who's Down. Your contacts information is not used for anything but this."/>
+        android:text="Who's Down uses phone numbers to identify its users. Please grant access to your contacts so Who's Down knows who to display to you, and also verify your phone number so your contacts can see you on Who's Down. Your contacts information is not used for anything but this."/>
 
     <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
         android:padding="16dp"

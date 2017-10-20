@@ -10,6 +10,7 @@ import android.databinding.DataBindingUtil
 import android.databinding.ObservableBoolean
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.provider.ContactsContract
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
@@ -21,8 +22,6 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupMenu
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
@@ -148,6 +147,13 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                 currentFocus.clearFocus()
             false
         }
+
+        /* show the tutorial if it's the users first time */
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        if (prefs.getBoolean("MainActivityFirstTime", true)) {
+            MainActivityTutorial(this).start()
+            prefs.edit().putBoolean("MainActivityFirstTime", false).apply()
+        }
     }
 
     override fun onMenuItemClick(menuItem: MenuItem): Boolean {
@@ -169,36 +175,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                 startActivity(intent)
             }
             R.id.tutorial -> {
-                TapTargetSequence(this)
-                        .targets(
-                                TapTarget.forView(dummyView, "Down switch", "Toggle on to indicate to your contacts that you're down (to hang out, or whatever).")
-                                        .transparentTarget(true)
-                                        .cancelable(true)
-                                        .textColor(R.color.white)
-                                        .outerCircleColor(R.color.colorAccent)
-                                        .targetCircleColor(R.color.white),
-                                TapTarget.forView(messageCard, "Status message", "This is displayed to your contacts when you're down, and updates when you press enter on the keyboard, or toggle the switch.")
-                                        .transparentTarget(true)
-                                        .cancelable(true)
-                                        .textColor(R.color.white)
-                                        .outerCircleColor(R.color.colorAccent)
-                                        .targetCircleColor(R.color.white)
-                                        .targetRadius(18),
-                                TapTarget.forView(dummyView, "Contacts", "When you're down, you'll see a list of all your contacts that are down. Try tapping and swiping on them.")
-                                        .cancelable(true)
-                                        .transparentTarget(true)
-                                        .textColor(R.color.white)
-                                        .outerCircleColor(R.color.colorAccent)
-                                        .targetRadius(0),
-                                TapTarget.forView(overflowButton, "Extras", "- Follow or block contacts\n- Share Who's Down\n- Contact the developer\n- View this tutorial again.")
-                                        .transparentTarget(true)
-                                        .cancelable(true)
-                                        .textColor(R.color.white)
-                                        .outerCircleColor(R.color.colorAccent)
-                                        .targetCircleColor(R.color.white))
-                        .considerOuterCircleCanceled(true)
-                        .continueOnCancel(true)
-                        .start()
+                MainActivityTutorial(this).start()
             }
         }
         return true
