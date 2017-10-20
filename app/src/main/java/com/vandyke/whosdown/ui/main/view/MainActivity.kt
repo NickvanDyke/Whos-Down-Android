@@ -44,7 +44,8 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         super.onCreate(savedInstanceState)
 
         /* check for contacts permission and that user is authorized on Firebase, launch permissions activity if either is false */
-        // TODO: also check for google play services availability, and make it downloadable in the permissionsactivity
+        /* TODO: also check for google play services availability, and make it downloadable in the RequirementsActivity? Maybe not necessary,
+        *  since they'll be downloading the app from the google play store, meaning they have the services available */
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
                 || FirebaseAuth.getInstance().currentUser == null) {
             startActivity(Intent(this, RequirementsActivity::class.java))
@@ -52,7 +53,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             return
         }
 
-        /* instantiate the MainViewModel and bind the view to it */
+        /* instantiate the MainViewModel and bind it to the view */
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         val viewModel = MainViewModel(application)
         binding.viewModel = viewModel
@@ -107,27 +108,27 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         }
 
         /* set peeps list stuff */
-//        peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, (peepsList.layoutManager as LinearLayoutManager).orientation))
+        // peepsList.addItemDecoration(DividerItemDecoration(peepsList.context, (peepsList.layoutManager as LinearLayoutManager).orientation))
         val peepsAdapter = PeepsAdapter(viewModel)
         peepsList.adapter = peepsAdapter
         peepsList.setHasFixedSize(true)
         ItemTouchHelper(SlideCallback(this, peepsList)).attachToRecyclerView(peepsList)
 
-        /* set swipe refresh for peeps list color and function */
-        peepsListSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimary))
+        /* set color and function for swipe refresh for peepsList */
+        peepsListSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent))
         peepsListSwipe.setOnRefreshListener {
             viewModel.refreshListeners()
             peepsListSwipe.isRefreshing = false
         }
 
-        /* hide the keyboard when the EditText loses focus */
+        /* hide the keyboard when the status message EditText loses focus */
         userMessage.onFocusChangeListener = View.OnFocusChangeListener { view, b ->
             if (!userMessage.hasFocus()) {
                 (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(view.windowToken, 0)
             }
         }
 
-        /* when enter is pressed on keyboard, set status in the db, and clear focus from the message box */
+        /* when enter is pressed on keyboard, set status in the db, and clear focus from the status message box */
         userMessage.setOnEditorActionListener { textView, i, keyEvent ->
             userMessage.clearFocus()
             viewModel.setUserStatus()
@@ -176,25 +177,25 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                                         .textColor(R.color.white)
                                         .outerCircleColor(R.color.colorAccent)
                                         .targetCircleColor(R.color.white),
-                                TapTarget.forView(messageCard, "Status message", "This will be displayed to your contacts when you're down, and updates when you press enter on the keyboard, or toggle the switch.")
+                                TapTarget.forView(messageCard, "Status message", "This is displayed to your contacts when you're down, and updates when you press enter on the keyboard, or toggle the switch.")
                                         .transparentTarget(true)
                                         .cancelable(true)
                                         .textColor(R.color.white)
                                         .outerCircleColor(R.color.colorAccent)
-                                        .targetCircleColor(R.color.colorAccent)
+                                        .targetCircleColor(R.color.white)
                                         .targetRadius(18),
-                                TapTarget.forView(overflowButton, "Popup menu", "From here you can share Who's Down, contact the dev, follow or block contacts, and view this tutorial again.")
-                                        .transparentTarget(true)
-                                        .cancelable(true)
-                                        .textColor(R.color.white)
-                                        .outerCircleColor(R.color.colorAccent)
-                                        .targetCircleColor(R.color.white),
-                                TapTarget.forView(dummyView, "Contacts", "When you're down, you'll see a list of all your contacts that are down. You can tap on them, as well as swipe left on them to text, and right to call.")
+                                TapTarget.forView(dummyView, "Contacts", "When you're down, you'll see a list of all your contacts that are down. Try tapping and swiping on them.")
                                         .cancelable(true)
                                         .transparentTarget(true)
                                         .textColor(R.color.white)
                                         .outerCircleColor(R.color.colorAccent)
-                                        .targetRadius(0))
+                                        .targetRadius(0),
+                                TapTarget.forView(overflowButton, "Extras", "- Follow or block contacts\n- Share Who's Down\n- Contact the developer\n- View this tutorial again.")
+                                        .transparentTarget(true)
+                                        .cancelable(true)
+                                        .textColor(R.color.white)
+                                        .outerCircleColor(R.color.colorAccent)
+                                        .targetCircleColor(R.color.white))
                         .considerOuterCircleCanceled(true)
                         .continueOnCancel(true)
                         .start()
