@@ -1,4 +1,4 @@
-package com.vandyke.whosdown.ui.permissions
+package com.vandyke.whosdown.ui.requirements
 
 import android.Manifest
 import android.app.Activity
@@ -32,14 +32,14 @@ class RequirementsActivity : Activity() {
         setContentView(R.layout.activity_requirements)
         hasContactsPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
         checkStatus()
-        /* need to set these programatically for some reason */
+        /* need to set these programmatically for some reason */
         verifyButton.setBackgroundResource(R.drawable.button_shape_no_fill)
         contactsButton.setBackgroundResource(R.drawable.button_shape_no_fill)
 
         if (loggedIn)
-            verifyButton.visibility = View.INVISIBLE
+            verifyButton.visibility = View.GONE
         if (hasContactsPermission)
-            contactsButton.visibility = View.INVISIBLE
+            contactsButton.visibility = View.GONE
     }
 
     fun verify(view: View? = null) {

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.databinding.DataBindingUtil
 import android.databinding.ObservableBoolean
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.support.constraint.ConstraintLayout
@@ -20,13 +21,15 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupMenu
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
 import com.vandyke.whosdown.ui.main.view.peepslist.PeepsAdapter
 import com.vandyke.whosdown.ui.main.view.peepslist.SlideCallback
 import com.vandyke.whosdown.ui.main.viewmodel.MainViewModel
-import com.vandyke.whosdown.ui.permissions.RequirementsActivity
+import com.vandyke.whosdown.ui.requirements.RequirementsActivity
 import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import com.vandyke.whosdown.util.clearNotifications
@@ -152,6 +155,19 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                 shareIntent.type = "text/plain"
                 startActivity(Intent.createChooser(shareIntent, "Share Who's Down"))
             }
+            R.id.emailDev -> {
+                val intent = Intent(Intent.ACTION_SENDTO)
+                intent.data = Uri.parse("mailto:")
+                intent.putExtra(Intent.EXTRA_EMAIL, "siamobiledev@gmail.com") // TODO: different email address
+                startActivity(intent)
+            }
+            R.id.tutorial -> {
+                TapTargetSequence(this)
+                        .targets(TapTarget.forView(downSwitch, "Toggle down", "Toggle this switch to indicate to your friends that you're down to hang out"),
+                                TapTarget.forView(userMessage, "Status message", "Enter text here for your friends to see when you're down, like \"Watching a movie, who's in?\""))
+                        .start()
+
+            }
         }
         return true
     }
@@ -159,7 +175,7 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             if (requestCode == CONTACT_CODE) {
-                val uri = data?.data
+                val uri = data?.data ?: return
                 val cursor = contentResolver.query(uri,
                         arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
                         null, null, null)
@@ -178,7 +194,6 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
         popupMenu.show()
     }
 
-    /* cancel all notifications upon resuming */
     override fun onResume() {
         super.onResume()
         clearNotifications(this)

@@ -57,14 +57,6 @@ class ContactActivity : Activity() {
         }
         cursor?.close()
 
-        followButton.setOnClickListener {
-
-        }
-
-        blockButton.setOnClickListener {
-
-        }
-
         contactText.setOnClickListener {
             startActivity(Intents.text(phoneNumber))
         }
@@ -89,7 +81,6 @@ class ContactActivity : Activity() {
         }
     }
 
-    /* cancel all notifications upon resuming */
     override fun onResume() {
         super.onResume()
         clearNotifications(this)

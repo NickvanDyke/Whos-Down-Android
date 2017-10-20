@@ -7,4 +7,10 @@
     <item
         android:id="@+id/contacts"
         android:title="Contacts"/>
+    <item
+        android:id="@+id/emailDev"
+        android:title="Email dev"/>
+    <item
+        android:id="@+id/tutorial"
+        android:title="Tutorial"/>
 </menu>
