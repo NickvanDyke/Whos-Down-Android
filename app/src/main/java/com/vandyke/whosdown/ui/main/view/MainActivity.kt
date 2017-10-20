@@ -21,8 +21,6 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupMenu
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
@@ -34,6 +32,8 @@ import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import com.vandyke.whosdown.util.clearNotifications
 import kotlinx.android.synthetic.main.activity_main.*
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 
 class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
@@ -140,6 +140,13 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                 currentFocus.clearFocus()
             false
         }
+
+        /* same for peepsList */
+        peepsList.setOnTouchListener { view, motionEvent ->
+            if (currentFocus is EditText)
+                currentFocus.clearFocus()
+            false
+        }
     }
 
     override fun onMenuItemClick(menuItem: MenuItem): Boolean {
@@ -157,16 +164,30 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
             }
             R.id.emailDev -> {
                 val intent = Intent(Intent.ACTION_SENDTO)
-                intent.data = Uri.parse("mailto:")
-                intent.putExtra(Intent.EXTRA_EMAIL, "siamobiledev@gmail.com") // TODO: different email address
+                intent.data = Uri.parse("mailto:siamobiledev@gmail.com") // TODO: different email address
                 startActivity(intent)
             }
             R.id.tutorial -> {
-                TapTargetSequence(this)
-                        .targets(TapTarget.forView(downSwitch, "Toggle down", "Toggle this switch to indicate to your friends that you're down to hang out"),
-                                TapTarget.forView(userMessage, "Status message", "Enter text here for your friends to see when you're down, like \"Watching a movie, who's in?\""))
-                        .start()
+                val switch = MaterialShowcaseView.Builder(this)
+                        .setTarget(dummyView)
+                        .setShapePadding(128)
+                        .setTitleText("Down switch")
+                        .setContentText("Toggle on to indicate to your contacts that you're down (to hang out, or whatever)")
+                        .setDismissOnTouch(true)
+                        .build()
 
+                val msg = MaterialShowcaseView.Builder(this)
+                        .setTarget(messageCard)
+                        .withRectangleShape()
+                        .setTitleText("Status message")
+                        .setContentText("This will be displayed to your contacts when you're down, and updates when you press enter on the keyboard, or toggle the switch")
+                        .setDismissOnTouch(true)
+                        .build()
+
+                MaterialShowcaseSequence(this)
+                        .addSequenceItem(switch)
+                        .addSequenceItem(msg)
+                        .start()
             }
         }
         return true
