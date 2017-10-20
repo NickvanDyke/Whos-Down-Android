@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke
+ * All rights reserved.
+ */
+
 package com.vandyke.whosdown.backend.data
 
 data class Peep(val number: String,

@@ -1,3 +1,8 @@
+<!--
+  ~ Copyright (c) 2017 Nicholas van Dyke
+  ~ All rights reserved.
+  -->
+
 <resources>
     <string name="app_name">Who\'s Down</string>
 </resources>

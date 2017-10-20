@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2017 Nicholas van Dyke
+ * All rights reserved.
+ */
+
 package com.vandyke.whosdown.ui.main.view
 
 import android.support.v4.view.animation.FastOutSlowInInterpolator
