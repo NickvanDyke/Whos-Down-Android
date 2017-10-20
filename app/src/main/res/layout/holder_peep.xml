@@ -10,6 +10,7 @@
 
     <TextView
         android:text="Name"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/peepName"
@@ -18,7 +19,7 @@
         app:layout_constraintBottom_toTopOf="@+id/peepMessage"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toRightOf="@+id/peepPic"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintRight_toLeftOf="@+id/peepTime"
         android:layout_marginEnd="8dp"
         app:layout_constraintHorizontal_bias="0.0"/>

@@ -21,6 +21,8 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.PopupMenu
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.firebase.auth.FirebaseAuth
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.databinding.ActivityMainBinding
@@ -32,8 +34,6 @@ import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.addOnPropertyChangedListener
 import com.vandyke.whosdown.util.clearNotifications
 import kotlinx.android.synthetic.main.activity_main.*
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 
 class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
@@ -168,25 +168,35 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                 startActivity(intent)
             }
             R.id.tutorial -> {
-                val switch = MaterialShowcaseView.Builder(this)
-                        .setTarget(dummyView)
-                        .setShapePadding(128)
-                        .setTitleText("Down switch")
-                        .setContentText("Toggle on to indicate to your contacts that you're down (to hang out, or whatever)")
-                        .setDismissOnTouch(true)
-                        .build()
-
-                val msg = MaterialShowcaseView.Builder(this)
-                        .setTarget(messageCard)
-                        .withRectangleShape()
-                        .setTitleText("Status message")
-                        .setContentText("This will be displayed to your contacts when you're down, and updates when you press enter on the keyboard, or toggle the switch")
-                        .setDismissOnTouch(true)
-                        .build()
-
-                MaterialShowcaseSequence(this)
-                        .addSequenceItem(switch)
-                        .addSequenceItem(msg)
+                TapTargetSequence(this)
+                        .targets(
+                                TapTarget.forView(dummyView, "Down switch", "Toggle on to indicate to your contacts that you're down (to hang out, or whatever).")
+                                        .transparentTarget(true)
+                                        .cancelable(true)
+                                        .textColor(R.color.white)
+                                        .outerCircleColor(R.color.colorAccent)
+                                        .targetCircleColor(R.color.white),
+                                TapTarget.forView(messageCard, "Status message", "This will be displayed to your contacts when you're down, and updates when you press enter on the keyboard, or toggle the switch.")
+                                        .transparentTarget(true)
+                                        .cancelable(true)
+                                        .textColor(R.color.white)
+                                        .outerCircleColor(R.color.colorAccent)
+                                        .targetCircleColor(R.color.colorAccent)
+                                        .targetRadius(18),
+                                TapTarget.forView(overflowButton, "Popup menu", "From here you can share Who's Down, contact the dev, follow or block contacts, and view this tutorial again.")
+                                        .transparentTarget(true)
+                                        .cancelable(true)
+                                        .textColor(R.color.white)
+                                        .outerCircleColor(R.color.colorAccent)
+                                        .targetCircleColor(R.color.white),
+                                TapTarget.forView(dummyView, "Contacts", "When you're down, you'll see a list of all your contacts that are down. You can tap on them, as well as swipe left on them to text, and right to call.")
+                                        .cancelable(true)
+                                        .transparentTarget(true)
+                                        .textColor(R.color.white)
+                                        .outerCircleColor(R.color.colorAccent)
+                                        .targetRadius(0))
+                        .considerOuterCircleCanceled(true)
+                        .continueOnCancel(true)
                         .start()
             }
         }
