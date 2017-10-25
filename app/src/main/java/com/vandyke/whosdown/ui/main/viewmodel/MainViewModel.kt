@@ -14,7 +14,7 @@ import android.databinding.ObservableList
 import com.vandyke.whosdown.backend.data.Peep
 import com.vandyke.whosdown.backend.data.UserStatusUpdate
 import com.vandyke.whosdown.ui.main.model.MainModel
-import com.vandyke.whosdown.util.addOnPropertyChangedListener
+import com.vandyke.whosdown.util.observe
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -35,7 +35,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         model.setDbListeners(application)
 
         /* need to do this here because setting an onCheckedChangeListener for the down switch doesn't work for some reason, maybe due to data binding */
-        down.addOnPropertyChangedListener { observable, i ->
+        down.observe { observable, i ->
             if (!modelMakingChanges)
                 setUserStatus()
         }

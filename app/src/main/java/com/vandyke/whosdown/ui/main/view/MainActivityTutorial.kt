@@ -31,7 +31,7 @@ class MainActivityTutorial(activity: MainActivity) : TapTargetSequence(activity)
                         .textColor(R.color.white)
                         .outerCircleColor(R.color.colorAccent)
                         .targetRadius(0),
-                TapTarget.forView(activity.findViewById(R.id.extrasButton), "Extras", "- Follow or block contacts\n- Share Who's Down\n- Contact the developer\n- View this tutorial again.")
+                TapTarget.forView(activity.findViewById(R.id.extrasButton), "Extras", "- Follow or block contacts\n- Share Who's Down\n- Contact the developer\n- View this tutorial again")
                         .transparentTarget(true)
                         .cancelable(true)
                         .textColor(R.color.white)

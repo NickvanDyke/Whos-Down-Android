@@ -29,7 +29,7 @@ class MainModel(val viewModel: MainViewModel) {
 
     init {
         database.getReference(".info/connected").addValueEventListener({
-            val connected = it.getValue(Boolean::class.java) ?: return@addValueEventListener
+            val connected = it.getValue(Boolean::class.java) ?: false
             viewModel.connected.set(connected)
         }, {
 

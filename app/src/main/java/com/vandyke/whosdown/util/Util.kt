@@ -26,6 +26,8 @@ fun clearNotifications(context: Context) {
     PreferenceManager.getDefaultSharedPreferences(context).edit().putStringSet("notifications", mutableSetOf()).apply()
 }
 
+fun Context.getColorRes(resId: Int) = ContextCompat.getColor(this, resId)
+
 fun Context.getCountryCode(): String {
     return (getSystemService(TELEPHONY_SERVICE) as TelephonyManager).networkCountryIso.toUpperCase()
 }
@@ -48,7 +50,7 @@ fun Long.toTimePassedString(): String {
 
 fun Long.timePassed(): Long = System.currentTimeMillis() - this
 
-fun BaseObservable.addOnPropertyChangedListener(function: (Observable, Int) -> Unit) {
+fun BaseObservable.observe(function: (Observable, Int) -> Unit) {
     this.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable, propertyId: Int) {
             function(sender, propertyId)

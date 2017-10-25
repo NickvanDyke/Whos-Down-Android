@@ -19,21 +19,21 @@ class ContactModel(val viewModel: ContactViewModel, val phoneNumber: String) {
 
     init {
         database.getReference(".info/connected").addValueEventListener({
-            val connected = it.getValue(Boolean::class.java) ?: return@addValueEventListener
+            val connected = it.getValue(Boolean::class.java) ?: false
             viewModel.connected.set(connected)
         }, {
 
         })
 
         user(phoneNumber, database).child("status").addValueEventListener({
-            val value = it.getValue(UserStatus::class.java) ?: return@addValueEventListener
+            val value = it.getValue(UserStatus::class.java) ?: UserStatus(false, "")
             viewModel.down.set(value.down)
             viewModel.message.set(value.message)
         }, {
 
         })
 
-        user(phoneNumber, database).child("subscribers").child(auth.currentUser!!.phoneNumber).addValueEventListener({
+        user(phoneNumber, database).child("followers").child(auth.currentUser!!.phoneNumber).addValueEventListener({
             val value = it.getValue(Boolean::class.java) ?: false
             viewModel.subscribed.set(value)
         }, {
@@ -49,7 +49,7 @@ class ContactModel(val viewModel: ContactViewModel, val phoneNumber: String) {
     }
 
     fun setSubscribed(subscribed: Boolean) {
-        val ref = user(phoneNumber, database).child("subscribers").child(auth.currentUser!!.phoneNumber)
+        val ref = user(phoneNumber, database).child("followers").child(auth.currentUser!!.phoneNumber)
         if (subscribed)
             ref.setValue(true)
         else

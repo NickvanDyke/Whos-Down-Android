@@ -107,6 +107,7 @@
             </android.support.v7.widget.CardView>
 
             <ImageButton
+                android:tint="@color/white"
                 android:onClick="showPopupMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
