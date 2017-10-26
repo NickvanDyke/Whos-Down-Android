@@ -6,6 +6,7 @@
 package com.vandyke.whosdown.ui.main.view
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,7 +19,6 @@ import android.preference.PreferenceManager
 import android.provider.ContactsContract
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.MenuItem
 import android.view.View
@@ -39,7 +39,7 @@ import com.vandyke.whosdown.util.clearNotifications
 import com.vandyke.whosdown.util.observe
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
+class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
 
     private val CONTACT_CODE = 108
 

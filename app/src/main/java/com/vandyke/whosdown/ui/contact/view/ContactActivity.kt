@@ -5,11 +5,11 @@
 
 package com.vandyke.whosdown.ui.contact.view
 
+import android.app.Activity
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.support.v7.app.AppCompatActivity
 import android.telephony.PhoneNumberUtils
 import android.view.MenuItem
 import android.widget.SeekBar
@@ -19,7 +19,7 @@ import com.vandyke.whosdown.ui.contact.viewmodel.ContactViewModel
 import com.vandyke.whosdown.util.*
 import kotlinx.android.synthetic.main.activity_contact.*
 
-class ContactActivity : AppCompatActivity() {
+class ContactActivity : Activity() {
 
     var lookupKey: String? = null
 
@@ -41,10 +41,7 @@ class ContactActivity : AppCompatActivity() {
         val viewModel = ContactViewModel(application, phoneNumber)
         binding.viewModel = viewModel
 
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        toolbarLayout.title = phoneNumber
+        contactName.text = phoneNumber
 
         /* look up name and contact picture and lookup key*/
         val cursor = contentResolver.query(phoneNumber.toPhoneUri(),
@@ -54,11 +51,11 @@ class ContactActivity : AppCompatActivity() {
                 null, null, null)
         /* set them */
         if (cursor != null && cursor.moveToFirst()) {
-            toolbarLayout.title = cursor.getString(0)
+            contactName.text = cursor.getString(0)
             lookupKey = cursor.getString(2)
             val imageUriString = cursor.getString(1)
             if (imageUriString != null)
-                toolbarImage.setImageURI(Uri.parse(imageUriString))
+                contactPic.setImageURI(Uri.parse(imageUriString))
         }
         cursor?.close()
 
@@ -70,9 +67,13 @@ class ContactActivity : AppCompatActivity() {
             startActivity(Intents.call(phoneNumber))
         }
 
-        toolbarImage.setOnClickListener {
+        contactPic.setOnClickListener {
             if (lookupKey != null)
                 startActivity(Intents.viewContact(lookupKey!!))
+        }
+
+        backButton.setOnClickListener {
+            finish()
         }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
