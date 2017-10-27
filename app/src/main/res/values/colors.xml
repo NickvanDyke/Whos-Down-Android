@@ -11,4 +11,5 @@
     <color name="white">#ffffff</color>
     <color name="lightRed">#ff3d5d</color>
     <color name="darkBlue">#3127a3</color>
+    <color name="shadowStart">#70707070</color>
 </resources>

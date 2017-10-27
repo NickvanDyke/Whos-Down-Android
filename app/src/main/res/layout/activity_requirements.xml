@@ -14,8 +14,9 @@
     android:background="@color/colorPrimary">
 
     <ImageView
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:src="@drawable/whos_down_logo"
         android:id="@+id/permissionsLogo"/>
 
@@ -45,6 +46,7 @@
     <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
         android:id="@+id/verifyButton"
         android:padding="16dp"
+        android:layout_marginBottom="32dp"
         android:onClick="verify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

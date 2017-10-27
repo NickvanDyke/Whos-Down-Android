@@ -17,10 +17,10 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
 import com.vandyke.whosdown.R
 import com.vandyke.whosdown.ui.main.view.MainActivity
+import com.vandyke.whosdown.util.currentUser
 import com.vandyke.whosdown.util.getBitmapFromVectorDrawable
 import kotlinx.android.synthetic.main.activity_requirements.*
 
@@ -64,7 +64,7 @@ class RequirementsActivity : Activity() {
                 verifyButton.doneLoadingAnimation(ContextCompat.getColor(this, R.color.white),
                         getBitmapFromVectorDrawable(this, R.drawable.ic_check))
                 val fadeAnimation = AlphaAnimation(1.0f, 0.0f)
-                fadeAnimation.duration = 600
+                fadeAnimation.duration = 800
                 fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
                     override fun onAnimationEnd(animation: Animation?) {
                         verifyButton.visibility = View.INVISIBLE
@@ -95,7 +95,7 @@ class RequirementsActivity : Activity() {
                 contactsButton.doneLoadingAnimation(ContextCompat.getColor(this, R.color.white),
                         getBitmapFromVectorDrawable(this, R.drawable.ic_check))
                 val fadeAnimation = AlphaAnimation(1.0f, 0.0f)
-                fadeAnimation.duration = 600
+                fadeAnimation.duration = 800
                 fadeAnimation.setAnimationListener(object : Animation.AnimationListener {
                     override fun onAnimationEnd(animation: Animation?) {
                         contactsButton.visibility = View.INVISIBLE
@@ -114,8 +114,7 @@ class RequirementsActivity : Activity() {
 
     fun checkStatus() {
         if (hasContactsPermission && loggedIn) {
-            FirebaseDatabase.getInstance().reference.child("users")
-                    .child(FirebaseAuth.getInstance().currentUser!!.phoneNumber)
+            currentUser()
                     .child("notificationToken")
                     .setValue(FirebaseInstanceId.getInstance().token)
             startActivity(Intent(this, MainActivity::class.java))

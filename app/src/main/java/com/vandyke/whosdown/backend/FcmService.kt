@@ -15,14 +15,15 @@ import android.support.v4.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.vandyke.whosdown.R
-import com.vandyke.whosdown.ui.contact.view.ContactActivity
 import com.vandyke.whosdown.ui.main.view.MainActivity
+import com.vandyke.whosdown.util.Intents
 import com.vandyke.whosdown.util.getContactName
 
 
 class FcmService : FirebaseMessagingService() {
 
-    // TODO: don't show notification if app is in the foreground
+    // TODO: don't show notification if app is in the foreground, and add call/text actions to 1-person notifications
+    // maybe also use multi-line stuff in the notifications
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (remoteMessage.data.isNotEmpty()) {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -39,11 +40,8 @@ class FcmService : FirebaseMessagingService() {
                             Intent(this, NotificationDismissedReceiver::class.java), 0))
 
             if (people.size == 1) {
-                val contactIntent = Intent(this, ContactActivity::class.java)
-                contactIntent.putExtra("phoneNumber", phoneNumber)
-
                 val pendingIntent = PendingIntent.getActivities(this, 0,
-                        arrayOf(Intent(this, MainActivity::class.java), contactIntent),
+                        arrayOf(Intent(this, MainActivity::class.java), Intents.contactActivity(this, phoneNumber)),
                         PendingIntent.FLAG_UPDATE_CURRENT)
 
                 builder.setContentTitle("$name is down!")
@@ -54,7 +52,6 @@ class FcmService : FirebaseMessagingService() {
                         PendingIntent.FLAG_UPDATE_CURRENT)
 
                 var text = ""
-
                 people.forEachIndexed { index, s ->
                     text += s
                     if (index < people.size - 1)

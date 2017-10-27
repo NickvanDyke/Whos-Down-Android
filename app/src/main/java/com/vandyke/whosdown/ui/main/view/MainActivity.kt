@@ -174,13 +174,13 @@ class MainActivity : Activity(), PopupMenu.OnMenuItemClickListener {
                 shareIntent.type = "text/plain"
                 startActivity(Intent.createChooser(shareIntent, "Share Who's Down"))
             }
+            R.id.tutorial -> {
+                MainActivityTutorial(this).start()
+            }
             R.id.emailDev -> {
                 val intent = Intent(Intent.ACTION_SENDTO)
                 intent.data = Uri.parse("mailto:siamobiledev@gmail.com") // TODO: different email address
                 startActivity(intent)
-            }
-            R.id.tutorial -> {
-                MainActivityTutorial(this).start()
             }
         }
         return true
